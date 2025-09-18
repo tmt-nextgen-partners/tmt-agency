@@ -8,7 +8,7 @@ export const BusinessSchema: React.FC = () => {
     "name": "TMT NextGen Partners",
     "description": "Business modernization agency specializing in process optimization, workflow automation, and digital transformation",
     "url": "https://tmtnextgen.com",
-    "telephone": "+1-555-012-3456",
+    "telephone": "+1-847-275-8758",
     "email": "hello@tmtnextgen.com",
     "address": {
       "@type": "PostalAddress",

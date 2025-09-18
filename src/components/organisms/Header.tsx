@@ -14,7 +14,6 @@ export const Header: React.FC = () => {
     { name: 'Services', href: '#services' },
     { name: 'Portfolio', href: '#portfolio' },
     { name: 'About', href: '#about' },
-    { name: 'Results', href: '#results' },
   ];
 
   return (
@@ -47,11 +46,11 @@ export const Header: React.FC = () => {
           {/* Desktop CTAs */}
           <div className="hidden md:flex items-center space-x-4">
             <a 
-              href="tel:+1-555-0123" 
+              href="tel:+1-847-275-8758" 
               className="flex items-center text-primary hover:text-primary-dark transition-colors"
             >
               <Phone className="w-4 h-4 mr-2" />
-              <span className="font-medium">(555) 012-3456</span>
+              <span className="font-medium">(847) 275-8758</span>
             </a>
             <Button variant="cta" size="sm" onClick={openModal}>
               Free Consultation
@@ -97,11 +96,11 @@ export const Header: React.FC = () => {
             ))}
             <div className="pt-4 space-y-3">
               <a 
-                href="tel:+1-555-0123" 
+                href="tel:+1-847-275-8758" 
                 className="flex items-center text-primary font-medium"
               >
                 <Phone className="w-4 h-4 mr-2" />
-                (555) 012-3456
+                (847) 275-8758
               </a>
               <Button 
                 variant="cta" 
