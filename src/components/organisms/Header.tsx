@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Button } from '../atoms/Button';
 import { H5 } from '../atoms/Typography';
-import { Menu, X, Phone } from 'lucide-react';
+import { Menu, X, Phone, Shield } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export const Header: React.FC = () => {
@@ -53,6 +54,12 @@ export const Header: React.FC = () => {
             <Button variant="cta" size="sm">
               Free Consultation
             </Button>
+            <Link to="/auth">
+              <Button variant="outline" size="sm">
+                <Shield className="w-4 h-4 mr-2" />
+                Admin
+              </Button>
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -97,6 +104,12 @@ export const Header: React.FC = () => {
               <Button variant="cta" size="sm" className="w-full">
                 Free Consultation
               </Button>
+              <Link to="/auth" className="block">
+                <Button variant="outline" size="sm" className="w-full">
+                  <Shield className="w-4 h-4 mr-2" />
+                  Admin
+                </Button>
+              </Link>
             </div>
           </nav>
         </div>

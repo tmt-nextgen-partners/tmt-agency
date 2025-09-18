@@ -1,145 +1,221 @@
-import React from 'react';
-import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Button } from '../atoms/Button';
-import { H3, Body } from '../atoms/Typography';
-import { CalendarDays, MessageSquare, Zap } from 'lucide-react';
+import React from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Calendar, Shield, Clock, Award } from "lucide-react";
+import { useLeads } from "@/hooks/useLeads";
+
+const formSchema = z.object({
+  firstName: z.string().min(2, "First name must be at least 2 characters"),
+  lastName: z.string().min(2, "Last name must be at least 2 characters"),
+  email: z.string().email("Please enter a valid email address"),
+  phone: z.string().optional(),
+  companyName: z.string().optional(),
+  monthlyBudget: z.string().min(1, "Please select your monthly budget"),
+  businessGoals: z.string().min(10, "Please provide more details about your business goals"),
+  challenges: z.string().min(10, "Please provide more details about your challenges"),
+});
 
 export const ConsultationForm: React.FC = () => {
+  const { createLead, isCreating } = useLeads();
+  
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      phone: "",
+      companyName: "",
+      monthlyBudget: "",
+      businessGoals: "",
+      challenges: "",
+    },
+  });
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    createLead(values);
+  };
   return (
-    <Card className="p-8 border-card-border bg-card shadow-elevation-xl">
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="text-center space-y-2">
-          <div className="flex justify-center mb-4">
-            <div className="bg-gradient-primary p-3 rounded-full">
-              <Zap className="w-6 h-6 text-primary-foreground" />
-            </div>
+    <Card>
+      <CardHeader>
+        <div className="flex justify-center mb-4">
+          <div className="bg-primary p-3 rounded-full">
+            <Calendar className="w-6 h-6 text-primary-foreground" />
           </div>
-          <H3>Get Your Free Process Consultation</H3>
-          <Body className="text-sm">
-            Discover how we can transform your business with our proven process optimization strategies.
-          </Body>
         </div>
-
-        {/* Form */}
-        <form className="space-y-4" noValidate aria-label="Free consultation request form">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="firstName" className="sr-only">First Name</label>
-              <Input 
-                id="firstName"
+        <CardTitle className="text-center">Get Your Free Process Consultation</CardTitle>
+        <p className="text-center text-muted-foreground">
+          Discover how we can transform your business with our proven process optimization strategies.
+        </p>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
                 name="firstName"
-                autoComplete="given-name"
-                required
-                placeholder="First Name" 
-                className="h-12"
-                aria-required="true"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>First Name *</FormLabel>
+                    <FormControl>
+                      <Input placeholder="John" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
-            <div>
-              <label htmlFor="lastName" className="sr-only">Last Name</label>
-              <Input 
-                id="lastName"
+              <FormField
+                control={form.control}
                 name="lastName"
-                autoComplete="family-name"
-                required
-                placeholder="Last Name" 
-                className="h-12"
-                aria-required="true"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Last Name *</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Smith" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
             </div>
-          </div>
-          
-          <div>
-            <label htmlFor="email" className="sr-only">Business Email</label>
-            <Input 
-              id="email"
-              name="email"
-              type="email" 
-              autoComplete="email"
-              required
-              placeholder="Business Email" 
-              className="h-12"
-              aria-required="true"
-            />
-          </div>
-          
-          <div>
-            <label htmlFor="phone" className="sr-only">Phone Number</label>
-            <Input 
-              id="phone"
-              name="phone"
-              type="tel" 
-              autoComplete="tel"
-              required
-              placeholder="Phone Number" 
-              className="h-12"
-              aria-required="true"
-            />
-          </div>
-          
-          <div>
-            <label htmlFor="company" className="sr-only">Company Name</label>
-            <Input 
-              id="company"
-              name="company"
-              autoComplete="organization"
-              required
-              placeholder="Company Name" 
-              className="h-12"
-              aria-required="true"
-            />
-          </div>
 
-          <div>
-            <label htmlFor="budget" className="sr-only">Monthly Budget</label>
-            <Select name="budget">
-              <SelectTrigger className="h-12" id="budget">
-                <SelectValue placeholder="Monthly Budget for Process Optimization" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="under-10k">Under $10,000</SelectItem>
-                <SelectItem value="10k-25k">$10,000 - $25,000</SelectItem>
-                <SelectItem value="25k-50k">$25,000 - $50,000</SelectItem>
-                <SelectItem value="over-50k">Over $50,000</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Business Email *</FormLabel>
+                    <FormControl>
+                      <Input type="email" placeholder="john@company.com" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Phone Number</FormLabel>
+                    <FormControl>
+                      <Input type="tel" placeholder="+1 (555) 123-4567" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
-          <div>
-            <label htmlFor="details" className="sr-only">Business Goals and Challenges</label>
-            <Textarea 
-              id="details"
-              name="details"
-              placeholder="Tell us about your business goals and current operational challenges..."
-              className="min-h-[100px] resize-none"
-              aria-label="Describe your business goals and current challenges"
+            <FormField
+              control={form.control}
+              name="companyName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Company Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Your Company Inc." {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
 
-          <Button variant="cta" size="lg" className="w-full" type="submit">
-            <CalendarDays className="w-5 h-5 mr-2" />
-            Schedule Free Consultation
-          </Button>
-        </form>
+            <FormField
+              control={form.control}
+              name="monthlyBudget"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Monthly Budget *</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select your budget range" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="Under $1,000">Under $1,000</SelectItem>
+                      <SelectItem value="$1,000 - $5,000">$1,000 - $5,000</SelectItem>
+                      <SelectItem value="$5,000 - $10,000">$5,000 - $10,000</SelectItem>
+                      <SelectItem value="$10,000 - $25,000">$10,000 - $25,000</SelectItem>
+                      <SelectItem value="$25,000+">$25,000+</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="businessGoals"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Business Goals & Objectives *</FormLabel>
+                  <FormControl>
+                    <Textarea 
+                      placeholder="Tell us about your primary business goals and what you hope to achieve..."
+                      className="min-h-[100px]"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="challenges"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Current Challenges *</FormLabel>
+                  <FormControl>
+                    <Textarea 
+                      placeholder="What are the main challenges you're facing in your business right now?"
+                      className="min-h-[100px]"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <Button type="submit" className="w-full" size="lg" disabled={isCreating}>
+              <Calendar className="w-4 h-4 mr-2" />
+              {isCreating ? "Submitting..." : "Schedule Free Consultation"}
+            </Button>
+          </form>
+        </Form>
 
         {/* Trust Indicators */}
-        <div className="text-center pt-4 border-t border-border">
-          <div className="flex items-center justify-center space-x-4 text-xs text-muted-foreground">
+        <div className="text-center pt-6 mt-6 border-t border-border">
+          <div className="flex items-center justify-center space-x-6 text-sm text-muted-foreground">
             <div className="flex items-center">
-              <MessageSquare className="w-4 h-4 mr-1" />
+              <Shield className="w-4 h-4 mr-2" />
               Free consultation
             </div>
             <div className="flex items-center">
-              <Zap className="w-4 h-4 mr-1" />
+              <Clock className="w-4 h-4 mr-2" />
               No obligations
+            </div>
+            <div className="flex items-center">
+              <Award className="w-4 h-4 mr-2" />
+              Proven results
             </div>
           </div>
         </div>
-      </div>
+      </CardContent>
     </Card>
   );
 };
