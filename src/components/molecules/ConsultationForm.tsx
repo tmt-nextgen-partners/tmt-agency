@@ -18,65 +18,109 @@ export const ConsultationForm: React.FC = () => {
               <Zap className="w-6 h-6 text-primary-foreground" />
             </div>
           </div>
-          <H3>Get Your Free Marketing Consultation</H3>
+          <H3>Get Your Free Process Consultation</H3>
           <Body className="text-sm">
-            Discover how we can transform your business with our proven digital marketing strategies.
+            Discover how we can transform your business with our proven process optimization strategies.
           </Body>
         </div>
 
         {/* Form */}
-        <form className="space-y-4">
+        <form className="space-y-4" noValidate aria-label="Free consultation request form">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="firstName" className="sr-only">First Name</label>
+              <Input 
+                id="firstName"
+                name="firstName"
+                autoComplete="given-name"
+                required
+                placeholder="First Name" 
+                className="h-12"
+                aria-required="true"
+              />
+            </div>
+            <div>
+              <label htmlFor="lastName" className="sr-only">Last Name</label>
+              <Input 
+                id="lastName"
+                name="lastName"
+                autoComplete="family-name"
+                required
+                placeholder="Last Name" 
+                className="h-12"
+                aria-required="true"
+              />
+            </div>
+          </div>
+          
+          <div>
+            <label htmlFor="email" className="sr-only">Business Email</label>
             <Input 
-              placeholder="First Name" 
+              id="email"
+              name="email"
+              type="email" 
+              autoComplete="email"
+              required
+              placeholder="Business Email" 
               className="h-12"
-              required 
-            />
-            <Input 
-              placeholder="Last Name" 
-              className="h-12"
-              required 
+              aria-required="true"
             />
           </div>
           
-          <Input 
-            type="email" 
-            placeholder="Business Email" 
-            className="h-12"
-            required 
-          />
+          <div>
+            <label htmlFor="phone" className="sr-only">Phone Number</label>
+            <Input 
+              id="phone"
+              name="phone"
+              type="tel" 
+              autoComplete="tel"
+              required
+              placeholder="Phone Number" 
+              className="h-12"
+              aria-required="true"
+            />
+          </div>
           
-          <Input 
-            type="tel" 
-            placeholder="Phone Number" 
-            className="h-12"
-            required 
-          />
-          
-          <Input 
-            placeholder="Company Name" 
-            className="h-12"
-            required 
-          />
+          <div>
+            <label htmlFor="company" className="sr-only">Company Name</label>
+            <Input 
+              id="company"
+              name="company"
+              autoComplete="organization"
+              required
+              placeholder="Company Name" 
+              className="h-12"
+              aria-required="true"
+            />
+          </div>
 
-          <Select>
-            <SelectTrigger className="h-12">
-              <SelectValue placeholder="Monthly Marketing Budget" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="under-5k">Under $5,000</SelectItem>
-              <SelectItem value="5k-15k">$5,000 - $15,000</SelectItem>
-              <SelectItem value="15k-50k">$15,000 - $50,000</SelectItem>
-              <SelectItem value="over-50k">Over $50,000</SelectItem>
-            </SelectContent>
-          </Select>
+          <div>
+            <label htmlFor="budget" className="sr-only">Monthly Budget</label>
+            <Select name="budget">
+              <SelectTrigger className="h-12" id="budget">
+                <SelectValue placeholder="Monthly Budget for Process Optimization" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="under-10k">Under $10,000</SelectItem>
+                <SelectItem value="10k-25k">$10,000 - $25,000</SelectItem>
+                <SelectItem value="25k-50k">$25,000 - $50,000</SelectItem>
+                <SelectItem value="over-50k">Over $50,000</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-          <Textarea 
-            placeholder="Tell us about your business goals and current marketing challenges..."
-            className="min-h-[100px] resize-none"
-          />
+          <div>
+            <label htmlFor="details" className="sr-only">Business Goals and Challenges</label>
+            <Textarea 
+              id="details"
+              name="details"
+              placeholder="Tell us about your business goals and current operational challenges..."
+              className="min-h-[100px] resize-none"
+              aria-label="Describe your business goals and current challenges"
+            />
+          </div>
 
-          <Button variant="cta" size="lg" className="w-full">
+          <Button variant="cta" size="lg" className="w-full" type="submit">
             <CalendarDays className="w-5 h-5 mr-2" />
             Schedule Free Consultation
           </Button>

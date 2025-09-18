@@ -15,7 +15,7 @@ export const Header: React.FC = () => {
   ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-lg border-b border-border shadow-elevation-sm">
+    <header role="banner" className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-lg border-b border-border shadow-elevation-sm">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -29,7 +29,7 @@ export const Header: React.FC = () => {
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
+          <nav role="navigation" aria-label="Main navigation" className="hidden md:flex items-center space-x-8">
             {navigation.map((item) => (
               <a
                 key={item.name}
@@ -59,17 +59,23 @@ export const Header: React.FC = () => {
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="md:hidden p-2 text-foreground hover:text-primary transition-colors"
+            aria-expanded={isMenuOpen}
+            aria-controls="mobile-menu"
+            aria-label="Toggle navigation menu"
           >
             {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
 
         {/* Mobile Menu */}
-        <div className={cn(
-          "md:hidden transition-all duration-300 overflow-hidden",
-          isMenuOpen ? "max-h-80 opacity-100" : "max-h-0 opacity-0"
-        )}>
-          <nav className="py-4 space-y-4 border-t border-border">
+        <div 
+          id="mobile-menu"
+          className={cn(
+            "md:hidden transition-all duration-300 overflow-hidden",
+            isMenuOpen ? "max-h-80 opacity-100" : "max-h-0 opacity-0"
+          )}
+        >
+          <nav role="navigation" aria-label="Mobile navigation" className="py-4 space-y-4 border-t border-border">
             {navigation.map((item) => (
               <a
                 key={item.name}

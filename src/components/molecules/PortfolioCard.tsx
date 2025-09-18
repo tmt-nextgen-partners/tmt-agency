@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '../atoms/Button';
+import { LazyImage } from './LazyImage';
 import { H4, Body, Caption } from '../atoms/Typography';
 import { ExternalLink, TrendingUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -31,16 +32,20 @@ export const PortfolioCard: React.FC<PortfolioCardProps> = ({
     )}>
       {/* Image */}
       <div className="relative overflow-hidden">
-        <img 
+        <LazyImage 
           src={image} 
-          alt={title}
+          alt={`${title} - ${category} case study showcasing business process improvements`}
           className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500"
+          width={400}
+          height={192}
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         <Button 
           variant="outline" 
           size="sm"
           className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-background/90 backdrop-blur-sm"
+          aria-label={`View ${title} case study details`}
         >
           <ExternalLink className="w-4 h-4 mr-2" />
           View Case Study

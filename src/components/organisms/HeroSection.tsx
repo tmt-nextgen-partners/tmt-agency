@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button } from '../atoms/Button';
 import { H1, BodyLarge } from '../atoms/Typography';
+import { LazyImage } from '../molecules/LazyImage';
 import { ArrowRight, Play, TrendingUp, Users, Award } from 'lucide-react';
 import heroImage from '@/assets/hero-business-team.jpg';
 
@@ -86,10 +87,14 @@ export const HeroSection: React.FC = () => {
           {/* Hero Image */}
           <div className="relative animate-slide-up">
             <div className="relative rounded-2xl overflow-hidden shadow-elevation-xl">
-              <img 
+              <LazyImage 
                 src={heroImage} 
-                alt="Professional team implementing business process automation and modernization"
+                alt="Professional team implementing business process automation and modernization solutions for enhanced operational efficiency"
                 className="w-full h-auto object-cover"
+                width={600}
+                height={400}
+                loading="eager"
+                sizes="(max-width: 768px) 100vw, 50vw"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
             </div>
