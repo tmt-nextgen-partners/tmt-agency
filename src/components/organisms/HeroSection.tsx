@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from '../atoms/Button';
 import { H1, BodyLarge } from '../atoms/Typography';
 import { LazyImage } from '../molecules/LazyImage';
-import { ArrowRight, Play, TrendingUp, Users, Award } from 'lucide-react';
+import { ArrowRight, TrendingUp, Users, Award } from 'lucide-react';
 import { useConsultationModal } from '@/contexts/ConsultationModalContext';
 import heroImage from '@/assets/hero-business-team.jpg';
 
@@ -62,10 +62,6 @@ export const HeroSection: React.FC = () => {
               <Button variant="cta" size="xl" className="group" onClick={openModal}>
                 Start Your Transformation Today
                 <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-              </Button>
-              <Button variant="outline" size="xl" className="group" onClick={openModal}>
-                <Play className="w-5 h-5 mr-2" />
-                Discover Your Automation Potential
               </Button>
             </div>
 
