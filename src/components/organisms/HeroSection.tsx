@@ -20,7 +20,7 @@ export const HeroSection: React.FC = () => {
             <div className="inline-flex items-center bg-gradient-success px-4 py-2 rounded-full">
               <Award className="w-4 h-4 text-success-foreground mr-2" />
               <span className="text-success-foreground text-sm font-medium">
-                Certified Digital Marketing Experts
+                Certified Business Transformation Experts
               </span>
             </div>
 
@@ -29,12 +29,12 @@ export const HeroSection: React.FC = () => {
               <H1 className="leading-tight">
                 Transform Your Business with{' '}
                 <span className="bg-gradient-primary bg-clip-text text-transparent">
-                  Digital Excellence
+                  Process Automation
                 </span>
               </H1>
               <BodyLarge>
                 We help small and medium businesses modernize their operations through 
-                cutting-edge digital marketing strategies that drive real, measurable growth.
+                cutting-edge process optimization and automation that drive real, measurable efficiency.
               </BodyLarge>
             </div>
 
@@ -57,12 +57,12 @@ export const HeroSection: React.FC = () => {
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-4">
               <Button variant="cta" size="xl" className="group">
-                Get Free Consultation
+                Get Free Process Audit
                 <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
               <Button variant="outline" size="xl" className="group">
                 <Play className="w-5 h-5 mr-2" />
-                Watch Our Success Stories
+                View Transformation Results
               </Button>
             </div>
 
@@ -88,7 +88,7 @@ export const HeroSection: React.FC = () => {
             <div className="relative rounded-2xl overflow-hidden shadow-elevation-xl">
               <img 
                 src={heroImage} 
-                alt="Professional team working on digital marketing strategies"
+                alt="Professional team implementing business process automation and modernization"
                 className="w-full h-auto object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />

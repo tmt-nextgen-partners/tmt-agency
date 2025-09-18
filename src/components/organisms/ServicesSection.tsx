@@ -2,44 +2,44 @@ import React from 'react';
 import { ServiceCard } from '../molecules/ServiceCard';
 import { H2, BodyLarge, Caption } from '../atoms/Typography';
 import { 
-  Globe, 
-  Search, 
-  MousePointer, 
-  Share2, 
-  PenTool, 
+  Cog, 
+  Zap, 
+  TrendingUp, 
+  Database, 
+  Workflow, 
   BarChart3 
 } from 'lucide-react';
 
 const services = [
   {
-    icon: Globe,
-    title: "Web Design & Development",
-    description: "Modern, responsive websites that convert visitors into customers with optimized user experience and cutting-edge design."
+    icon: Cog,
+    title: "Business Process Optimization",
+    description: "Streamline your operations with data-driven process improvements that eliminate bottlenecks and boost efficiency."
   },
   {
-    icon: Search,
-    title: "Search Engine Optimization",
-    description: "Dominate search rankings with our proven SEO strategies that drive organic traffic and increase your online visibility."
+    icon: Zap,
+    title: "Workflow Automation",
+    description: "Automate repetitive tasks and workflows to save time, reduce errors, and free up your team for strategic work."
   },
   {
-    icon: MousePointer,
-    title: "Pay-Per-Click Advertising",
-    description: "Maximize ROI with targeted PPC campaigns across Google, Facebook, and LinkedIn that generate qualified leads."
+    icon: TrendingUp,
+    title: "Performance Analytics",
+    description: "Gain deep insights into your business performance with advanced analytics and KPI tracking systems."
   },
   {
-    icon: Share2,
-    title: "Social Media Marketing",
-    description: "Build brand awareness and engage your audience with strategic social media campaigns that drive business growth."
+    icon: Database,
+    title: "Data Integration & Management",
+    description: "Unify your business data across platforms for better decision-making and streamlined operations."
   },
   {
-    icon: PenTool,
-    title: "Content Marketing",
-    description: "Create compelling content that educates, engages, and converts your target audience into loyal customers."
+    icon: Workflow,
+    title: "Digital Transformation Strategy",
+    description: "Comprehensive roadmap to modernize your business processes and embrace digital-first operations."
   },
   {
     icon: BarChart3,
-    title: "Analytics & Reporting",
-    description: "Make data-driven decisions with comprehensive analytics and transparent reporting that tracks your success."
+    title: "ROI Measurement & Optimization",
+    description: "Track the impact of process improvements with transparent reporting and continuous optimization."
   }
 ];
 
@@ -50,10 +50,10 @@ export const ServicesSection: React.FC = () => {
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
           <Caption className="text-primary">OUR SERVICES</Caption>
-          <H2>Complete Digital Marketing Solutions</H2>
+          <H2>Complete Business Modernization Solutions</H2>
           <BodyLarge>
-            From strategy to execution, we provide end-to-end digital marketing services 
-            that help businesses thrive in the digital era.
+            From process analysis to implementation, we provide end-to-end business transformation services 
+            that help companies operate more efficiently and profitably.
           </BodyLarge>
         </div>
 
@@ -73,12 +73,12 @@ export const ServicesSection: React.FC = () => {
         {/* Bottom CTA */}
         <div className="text-center mt-16">
           <div className="bg-gradient-subtle rounded-2xl p-8 border border-border">
-            <H2 className="mb-4">Need a Custom Solution?</H2>
+            <H2 className="mb-4">Need a Custom Transformation?</H2>
             <BodyLarge className="mb-6">
-              Every business is unique. Let's discuss how our services can be tailored to your specific needs.
+              Every business has unique processes. Let's discuss how our automation solutions can be tailored to your specific workflows.
             </BodyLarge>
             <button className="bg-gradient-primary text-primary-foreground px-8 py-4 rounded-lg font-semibold hover:shadow-glow hover:scale-105 transform transition-all duration-300">
-              Schedule Strategy Session
+              Schedule Process Assessment
             </button>
           </div>
         </div>
