@@ -1,6 +1,8 @@
 import React from 'react';
 import { ServiceCard } from '../molecules/ServiceCard';
 import { H2, BodyLarge, Caption } from '../atoms/Typography';
+import { Button } from '@/components/ui/button';
+import { useConsultationModal } from '@/contexts/ConsultationModalContext';
 import { 
   Cog, 
   Zap, 
@@ -44,6 +46,8 @@ const services = [
 ];
 
 export const ServicesSection: React.FC = () => {
+  const { openModal } = useConsultationModal();
+  
   return (
     <section id="services" className="py-20 bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -77,9 +81,13 @@ export const ServicesSection: React.FC = () => {
             <BodyLarge className="mb-6">
               Every business has unique processes. Let's discuss how our automation solutions can be tailored to your specific workflows.
             </BodyLarge>
-            <button className="bg-gradient-primary text-primary-foreground px-8 py-4 rounded-lg font-semibold hover:shadow-glow hover:scale-105 transform transition-all duration-300">
+            <Button 
+              onClick={openModal}
+              size="lg"
+              className="bg-gradient-primary hover:shadow-glow hover:scale-105 transform transition-all duration-300"
+            >
               Schedule Process Assessment
-            </button>
+            </Button>
           </div>
         </div>
       </div>

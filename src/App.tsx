@@ -8,6 +8,8 @@ import { HelmetProvider } from "react-helmet-async";
 import { useServiceWorker } from "@/hooks/useServiceWorker";
 import { measureCoreWebVitals } from "@/utils/performance";
 import { AuthProvider } from "@/hooks/useAuth";
+import { ConsultationModalProvider } from "@/contexts/ConsultationModalContext";
+import { ConsultationModal } from "@/components/organisms/ConsultationModal";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Admin from "./pages/Admin";
@@ -29,19 +31,22 @@ const App = () => {
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/admin" element={<Admin />} />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </BrowserRouter>
-          </TooltipProvider>
+          <ConsultationModalProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/auth" element={<Auth />} />
+                  <Route path="/admin" element={<Admin />} />
+                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </BrowserRouter>
+              <ConsultationModal />
+            </TooltipProvider>
+          </ConsultationModalProvider>
         </AuthProvider>
       </QueryClientProvider>
     </HelmetProvider>

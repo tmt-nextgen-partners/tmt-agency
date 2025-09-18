@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Calendar, Shield, Clock, Award } from "lucide-react";
 import { useLeads } from "@/hooks/useLeads";
+import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
   firstName: z.string().min(2, "First name must be at least 2 characters"),
@@ -22,8 +23,14 @@ const formSchema = z.object({
   challenges: z.string().min(10, "Please provide more details about your challenges"),
 });
 
-export const ConsultationForm: React.FC = () => {
+interface ConsultationFormProps {
+  isModal?: boolean;
+  onSuccess?: () => void;
+}
+
+export const ConsultationForm: React.FC<ConsultationFormProps> = ({ isModal = false, onSuccess }) => {
   const { createLead, isCreating } = useLeads();
+  const { toast } = useToast();
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -40,22 +47,44 @@ export const ConsultationForm: React.FC = () => {
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    createLead(values);
+    try {
+      await createLead(values);
+      toast({
+        title: "Consultation Scheduled!",
+        description: "We'll contact you within 24 hours to schedule your free consultation.",
+      });
+      form.reset();
+      onSuccess?.();
+    } catch (error) {
+      toast({
+        title: "Something went wrong",
+        description: "Please try again or contact us directly.",
+        variant: "destructive",
+      });
+    }
   };
+  const CardWrapper = isModal ? 'div' : Card;
+  const HeaderWrapper = isModal ? 'div' : CardHeader;
+  const ContentWrapper = isModal ? 'div' : CardContent;
+
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex justify-center mb-4">
-          <div className="bg-primary p-3 rounded-full">
-            <Calendar className="w-6 h-6 text-primary-foreground" />
+    <CardWrapper className={isModal ? '' : undefined}>
+      <HeaderWrapper className={isModal ? 'text-center mb-6' : undefined}>
+        {!isModal && (
+          <div className="flex justify-center mb-4">
+            <div className="bg-primary p-3 rounded-full">
+              <Calendar className="w-6 h-6 text-primary-foreground" />
+            </div>
           </div>
-        </div>
-        <CardTitle className="text-center">Get Your Free Process Consultation</CardTitle>
+        )}
+        <CardTitle className={`text-center ${isModal ? 'text-2xl mb-2' : ''}`}>
+          Get Your Free Process Consultation
+        </CardTitle>
         <p className="text-center text-muted-foreground">
           Discover how we can transform your business with our proven process optimization strategies.
         </p>
-      </CardHeader>
-      <CardContent>
+      </HeaderWrapper>
+      <ContentWrapper>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -215,7 +244,7 @@ export const ConsultationForm: React.FC = () => {
             </div>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </ContentWrapper>
+    </CardWrapper>
   );
 };

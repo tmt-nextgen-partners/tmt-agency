@@ -4,9 +4,11 @@ import { Button } from '../atoms/Button';
 import { H5 } from '../atoms/Typography';
 import { Menu, X, Phone, Shield } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useConsultationModal } from '@/contexts/ConsultationModalContext';
 
 export const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { openModal } = useConsultationModal();
 
   const navigation = [
     { name: 'Services', href: '#services' },
@@ -51,7 +53,7 @@ export const Header: React.FC = () => {
               <Phone className="w-4 h-4 mr-2" />
               <span className="font-medium">(555) 012-3456</span>
             </a>
-            <Button variant="cta" size="sm">
+            <Button variant="cta" size="sm" onClick={openModal}>
               Free Consultation
             </Button>
             <Link to="/auth">
@@ -101,7 +103,15 @@ export const Header: React.FC = () => {
                 <Phone className="w-4 h-4 mr-2" />
                 (555) 012-3456
               </a>
-              <Button variant="cta" size="sm" className="w-full">
+              <Button 
+                variant="cta" 
+                size="sm" 
+                className="w-full"
+                onClick={() => {
+                  openModal();
+                  setIsMenuOpen(false);
+                }}
+              >
                 Free Consultation
               </Button>
               <Link to="/auth" className="block">
