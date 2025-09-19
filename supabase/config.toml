@@ -1,1 +1,38 @@
 project_id = "nxyunvvkchhhzgspiflq"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "storage", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+
+[studio]
+enabled = true
+port = 54323
+
+[inbound_email]
+enabled = false
+
+[storage]
+enabled = true
+file_size_limit = "50MiB"
+
+[auth]
+enabled = true
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["https://localhost:3000"]
+jwt_expiry = 3600
+enable_signup = true
+
+[functions.send-email]
+verify_jwt = false
+
+[functions.process-email-queue]
+verify_jwt = false
+
+[edge_runtime]
+policy = "per_worker"

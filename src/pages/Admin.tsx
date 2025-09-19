@@ -6,7 +6,9 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/hooks/useAuth';
 import { useLeads } from '@/hooks/useLeads';
+import { EmailManagement } from '@/components/organisms/EmailManagement';
 import { SEOHead } from '@/components/atoms/SEOHead';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Users, 
   TrendingUp, 
@@ -133,14 +135,22 @@ const Admin = () => {
             </Card>
           </div>
 
-          {/* Leads List */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Recent Leads</CardTitle>
-              <CardDescription>
-                Latest leads from your consultation form
-              </CardDescription>
-            </CardHeader>
+          {/* Main Content Tabs */}
+          <Tabs defaultValue="leads" className="space-y-6">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="leads">Leads</TabsTrigger>
+              <TabsTrigger value="emails">Email System</TabsTrigger>
+              <TabsTrigger value="analytics">Analytics</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="leads">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Recent Leads</CardTitle>
+                  <CardDescription>
+                    Latest leads from your consultation form
+                  </CardDescription>
+                </CardHeader>
             <CardContent>
               {isLoading ? (
                 <div className="text-center py-8">Loading leads...</div>
@@ -227,6 +237,28 @@ const Admin = () => {
               )}
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="emails">
+          <EmailManagement />
+        </TabsContent>
+
+        <TabsContent value="analytics">
+          <Card>
+            <CardHeader>
+              <CardTitle>Analytics Dashboard</CardTitle>
+              <CardDescription>
+                Coming soon - Lead conversion metrics and performance analytics
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center py-8 text-muted-foreground">
+                Analytics features will be available in a future update
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
         </div>
       </div>
     </>

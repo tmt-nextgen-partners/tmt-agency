@@ -124,6 +124,29 @@ export function useLeads() {
           ]);
       }
 
+      // Send notification and welcome emails
+      try {
+        await Promise.all([
+          // Send notification email to admins
+          supabase.functions.invoke('send-email', {
+            body: {
+              type: 'lead_notification',
+              leadId: data.id,
+            },
+          }),
+          // Send welcome email to lead
+          supabase.functions.invoke('send-email', {
+            body: {
+              type: 'welcome_email',
+              leadId: data.id,
+            },
+          }),
+        ]);
+      } catch (emailError) {
+        console.error('Error sending emails:', emailError);
+        // Don't fail the lead creation if emails fail
+      }
+
       return data;
     },
     onSuccess: () => {
