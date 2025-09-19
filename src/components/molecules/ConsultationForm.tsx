@@ -29,7 +29,7 @@ interface ConsultationFormProps {
 }
 
 export const ConsultationForm: React.FC<ConsultationFormProps> = ({ isModal = false, onSuccess }) => {
-  const { createLead, isCreating } = useLeads();
+  const { createLead, isCreating } = useLeads(false);
   const { toast } = useToast();
   
   const form = useForm<z.infer<typeof formSchema>>({

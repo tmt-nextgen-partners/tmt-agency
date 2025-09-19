@@ -31,7 +31,7 @@ export interface LeadFormData {
   challenges?: string;
 }
 
-export function useLeads() {
+export function useLeads(enableList: boolean = true) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -52,105 +52,24 @@ export function useLeads() {
       if (error) throw error;
       return data as Lead[];
     },
+    enabled: enableList,
   });
 
   const createLeadMutation = useMutation({
     mutationFn: async (formData: LeadFormData) => {
-      // Get consultation form source
-      const { data: source } = await supabase
-        .from('lead_sources')
-        .select('id')
-        .eq('name', 'consultation_form')
-        .single();
-
-      // Calculate lead score
-      const leadData = {
-        company_name: formData.companyName,
-        phone: formData.phone,
-        monthly_budget: formData.monthlyBudget,
-        business_goals: formData.businessGoals,
-        challenges: formData.challenges,
-      };
-
-      const { data: scoreData } = await supabase.rpc('calculate_lead_score', {
-        lead_data: leadData
+      const { data, error } = await supabase.functions.invoke('create-lead', {
+        body: formData,
       });
 
-      // Create the lead
-      const { data, error } = await supabase
-        .from('leads')
-        .insert([
-          {
-            email: formData.email,
-            first_name: formData.firstName,
-            last_name: formData.lastName,
-            company_name: formData.companyName,
-            phone: formData.phone,
-            monthly_budget: formData.monthlyBudget,
-            business_goals: formData.businessGoals,
-            challenges: formData.challenges,
-            source_id: source?.id,
-            score: scoreData || 0,
-          },
-        ])
-        .select()
-        .single();
-
       if (error) throw error;
-
-      // Create initial activity
-      await supabase
-        .from('lead_activities')
-        .insert([
-          {
-            lead_id: data.id,
-            activity_type: 'form_submission',
-            title: 'Consultation Form Submitted',
-            description: `New lead from consultation form. Budget: ${formData.monthlyBudget}`,
-            metadata: leadData,
-          },
-        ]);
-
-      // Save score history
-      if (scoreData > 0) {
-        await supabase
-          .from('lead_scores')
-          .insert([
-            {
-              lead_id: data.id,
-              score: scoreData,
-              reason: 'Initial lead scoring from form submission',
-            },
-          ]);
-      }
-
-      // Send notification and welcome emails
-      try {
-        await Promise.all([
-          // Send notification email to admins
-          supabase.functions.invoke('send-email', {
-            body: {
-              type: 'lead_notification',
-              leadId: data.id,
-            },
-          }),
-          // Send welcome email to lead
-          supabase.functions.invoke('send-email', {
-            body: {
-              type: 'welcome_email',
-              leadId: data.id,
-            },
-          }),
-        ]);
-      } catch (emailError) {
-        console.error('Error sending emails:', emailError);
-        // Don't fail the lead creation if emails fail
-      }
+      if (!data.success) throw new Error(data.error || 'Failed to create lead');
 
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['leads'] });
+      if (enableList) {
+        queryClient.invalidateQueries({ queryKey: ['leads'] });
+      }
       toast({
         title: "Success!",
         description: "Your consultation request has been submitted. We'll get back to you soon!",
