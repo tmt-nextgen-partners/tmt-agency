@@ -227,6 +227,10 @@ export type Database = {
         Args: { lead_data: Json }
         Returns: number
       }
+      is_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
     }
     Enums: {
       activity_type:
