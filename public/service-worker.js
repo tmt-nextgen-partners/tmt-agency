@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tmt-nextgen-v1';
+const CACHE_NAME = 'tmt-nextgen-v2';
 const STATIC_CACHE_URLS = [
   '/',
   '/index.html',
@@ -9,6 +9,8 @@ const STATIC_CACHE_URLS = [
   '/assets/portfolio-healthcare.jpg',
   '/assets/portfolio-legal.jpg'
 ];
+
+console.log('Service Worker: Cache version', CACHE_NAME);
 
 // Install event - cache static assets
 self.addEventListener('install', (event) => {
