@@ -12,10 +12,10 @@ export const BusinessSchema: React.FC = () => {
     "email": "hello@tmtnextgen.com",
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": "123 Business Ave, Suite 100",
-      "addressLocality": "Innovation City",
-      "addressRegion": "IC",
-      "postalCode": "12345",
+      "streetAddress": "1735 W Diversey Parkway",
+      "addressLocality": "Chicago",
+      "addressRegion": "IL",
+      "postalCode": "60614",
       "addressCountry": "US"
     },
     "serviceType": [

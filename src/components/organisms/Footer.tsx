@@ -52,7 +52,9 @@ export const Footer: React.FC = () => {
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
                 <Phone className="w-4 h-4 text-primary" />
-                <span className="text-sm">(847) 275-8758</span>
+                <a href="tel:+1-847-275-8758" className="text-sm hover:text-primary transition-colors">
+                  (847) 275-8758
+                </a>
               </div>
               <div className="flex items-center space-x-3">
                 <Mail className="w-4 h-4 text-primary" />
@@ -60,7 +62,7 @@ export const Footer: React.FC = () => {
               </div>
               <div className="flex items-center space-x-3">
                 <MapPin className="w-4 h-4 text-primary" />
-                <span className="text-sm">123 Business Ave, Suite 100<br />Innovation City, IC 12345</span>
+                <span className="text-sm">1735 W Diversey Parkway<br />Chicago, IL 60614</span>
               </div>
             </div>
           </div>
