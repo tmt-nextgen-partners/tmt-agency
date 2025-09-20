@@ -1,13 +1,10 @@
-const CACHE_NAME = 'tmt-nextgen-v2';
+const CACHE_NAME = 'tmt-nextgen-v3';
 const STATIC_CACHE_URLS = [
   '/',
   '/index.html',
   '/src/main.tsx',
   '/src/index.css',
-  '/assets/hero-business-team.jpg',
-  '/assets/portfolio-ecommerce.jpg',
-  '/assets/portfolio-healthcare.jpg',
-  '/assets/portfolio-legal.jpg'
+  '/assets/hero-business-team.jpg'
 ];
 
 console.log('Service Worker: Cache version', CACHE_NAME);
