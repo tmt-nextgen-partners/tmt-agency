@@ -58,7 +58,9 @@ export const Footer: React.FC = () => {
               </div>
               <div className="flex items-center space-x-3">
                 <Mail className="w-4 h-4 text-primary" />
-                <span className="text-sm">hello@tmtnextgen.com</span>
+                <a href="mailto:tmtnextgenpartners@gmail.com" className="text-sm hover:text-primary transition-colors">
+                  tmtnextgenpartners@gmail.com
+                </a>
               </div>
               <div className="flex items-center space-x-3">
                 <MapPin className="w-4 h-4 text-primary" />
