@@ -5,7 +5,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
-// Service worker registration temporarily disabled to fix hook error
 import { measureCoreWebVitals } from "@/utils/performance";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ConsultationModalProvider } from "@/contexts/ConsultationModalContext";
@@ -18,8 +17,6 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 const App = () => {
-  // useServiceWorker(); // temporarily disabled due to invalid hook call error
-  
   // Initialize performance monitoring
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
