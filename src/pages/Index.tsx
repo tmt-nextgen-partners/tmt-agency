@@ -5,8 +5,6 @@ import { SkipLink } from '../components/atoms/SkipLink';
 import { Header } from '../components/organisms/Header';
 import { HeroSection } from '../components/organisms/HeroSection';
 import { ServicesSection } from '../components/organisms/ServicesSection';
-import { PortfolioSection } from '../components/organisms/PortfolioSection';
-
 import { ConsultationSection } from '../components/organisms/ConsultationSection';
 import { Footer } from '../components/organisms/Footer';
 
@@ -21,7 +19,6 @@ const Index = () => {
         <main role="main" id="main-content">
           <HeroSection />
           <ServicesSection />
-          <PortfolioSection />
           <ConsultationSection />
         </main>
         <Footer />
