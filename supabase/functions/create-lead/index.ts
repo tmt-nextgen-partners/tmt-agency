@@ -180,8 +180,9 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Send notification and welcome emails
     try {
-      console.log('Sending notification and welcome emails...');
-      await Promise.all([
+      console.log(`📧 Sending notification and welcome emails for lead: ${leadRecord.id}...`);
+      
+      const emailResults = await Promise.allSettled([
         // Send notification email to admins
         supabase.functions.invoke('send-email', {
           body: {
@@ -197,9 +198,21 @@ const handler = async (req: Request): Promise<Response> => {
           },
         }),
       ]);
-      console.log('Emails sent successfully');
-    } catch (emailError) {
-      console.error('Error sending emails:', emailError);
+      
+      // Log results of each email attempt
+      emailResults.forEach((result, index) => {
+        const emailType = index === 0 ? 'notification' : 'welcome';
+        if (result.status === 'fulfilled') {
+          console.log(`✅ ${emailType} email function invoked successfully:`, result.value);
+        } else {
+          console.error(`❌ ${emailType} email function failed:`, result.reason);
+        }
+      });
+      
+      console.log('📧 Email invocation process completed');
+    } catch (emailError: any) {
+      console.error('❌ Critical error in email sending process:', emailError);
+      console.error('❌ Email error stack:', emailError?.stack);
       // Don't fail the lead creation if emails fail
     }
 
