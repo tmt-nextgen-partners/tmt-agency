@@ -174,7 +174,7 @@ async function sendLeadNotificationEmail(lead: Lead) {
       console.log(`📤 Sending notification email to: ${admin.email}`);
       
       const { data: emailResult, error } = await resend.emails.send({
-        from: 'TMT Next Gen Partners <onboarding@resend.dev>',
+        from: 'TMT Next Gen Partners <notifications@tmt-nextgen-partners.com>',
         to: [admin.email],
         subject: `New Lead Received - ${lead.first_name || ''} ${lead.last_name || ''}`,
         html,
@@ -244,7 +244,7 @@ async function sendWelcomeEmail(lead: Lead) {
     console.log(`📤 Sending welcome email to: ${lead.email}`);
     
     const { data: emailResult, error } = await resend.emails.send({
-      from: 'TMT Next Gen Partners <onboarding@resend.dev>',
+      from: 'TMT Next Gen Partners <welcome@tmt-nextgen-partners.com>',
       to: [lead.email],
       subject: `Welcome ${lead.first_name || ''}! Your consultation request has been received`,
       html,
@@ -305,7 +305,7 @@ async function sendTemplateEmail(templateId: string, recipient: string, template
 
   try {
     const { data: emailResult, error } = await resend.emails.send({
-      from: 'no-reply@resend.dev',
+      from: 'TMT Next Gen Partners <noreply@tmt-nextgen-partners.com>',
       to: [recipient],
       subject,
       html: htmlContent,
