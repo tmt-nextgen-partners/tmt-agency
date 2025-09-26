@@ -26,6 +26,10 @@ const handler = async (req: Request): Promise<Response> => {
   try {
     console.log('Create lead function called');
     
+    // Rate limiting: Get client IP for basic protection
+    const clientIP = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
+    console.log('Request from IP:', clientIP);
+    
     // Initialize Supabase client with service role key for admin operations
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -37,7 +41,52 @@ const handler = async (req: Request): Promise<Response> => {
       }
     });
 
-    const formData: LeadFormData = await req.json();
+    // Parse and validate request body
+    let formData: LeadFormData;
+    try {
+      formData = await req.json();
+    } catch (error) {
+      console.error('Invalid JSON in request body:', error);
+      throw new Error('Invalid request format');
+    }
+
+    // Enhanced input validation and sanitization
+    if (!formData.email || typeof formData.email !== 'string') {
+      throw new Error('Valid email is required');
+    }
+
+    // Email format validation
+    const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+    if (!emailRegex.test(formData.email.trim())) {
+      throw new Error('Invalid email format');
+    }
+
+    // Check for duplicate emails (basic spam protection)
+    const recentLeadCheck = await supabase
+      .from('leads')
+      .select('id, created_at')
+      .eq('email', formData.email.trim().toLowerCase())
+      .gte('created_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()) // Last 24 hours
+      .maybeSingle();
+
+    if (recentLeadCheck.data && !recentLeadCheck.error) {
+      console.log('Duplicate email submission prevented:', formData.email);
+      throw new Error('A submission with this email already exists. Please wait 24 hours before submitting again.');
+    }
+
+    // Sanitize all string inputs
+    const sanitizedData = {
+      email: formData.email.trim().toLowerCase(),
+      firstName: formData.firstName ? formData.firstName.trim().substring(0, 100) : undefined,
+      lastName: formData.lastName ? formData.lastName.trim().substring(0, 100) : undefined,
+      companyName: formData.companyName ? formData.companyName.trim().substring(0, 200) : undefined,
+      phone: formData.phone ? formData.phone.replace(/[^0-9+\-\(\)\s]/g, '').substring(0, 20) : undefined,
+      monthlyBudget: formData.monthlyBudget ? formData.monthlyBudget.trim() : undefined,
+      businessGoals: formData.businessGoals ? formData.businessGoals.trim().substring(0, 2000) : undefined,
+      challenges: formData.challenges ? formData.challenges.trim().substring(0, 2000) : undefined,
+    };
+
+    formData = sanitizedData;
     console.log('Received form data:', { ...formData, email: '[REDACTED]' });
 
     // Get consultation form source
@@ -45,7 +94,7 @@ const handler = async (req: Request): Promise<Response> => {
       .from('lead_sources')
       .select('id')
       .eq('name', 'consultation_form')
-      .single();
+      .maybeSingle();
 
     if (sourceError) {
       console.error('Error fetching lead source:', sourceError);
