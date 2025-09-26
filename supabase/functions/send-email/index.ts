@@ -171,11 +171,11 @@ async function sendLeadNotificationEmail(lead: Lead) {
 
   for (const admin of adminProfiles) {
     try {
-      console.log(`📤 Sending notification email to: tmtnextgenpartners@gmail.com`);
+      console.log(`📤 Sending notification email to: ${admin.email}`);
       
       const { data: emailResult, error } = await resend.emails.send({
         from: 'TMT Next Gen Partners <onboarding@resend.dev>',
-        to: ['tmtnextgenpartners@gmail.com'], // Use verified email for testing
+        to: [admin.email],
         subject: `New Lead Received - ${lead.first_name || ''} ${lead.last_name || ''}`,
         html,
       });
@@ -241,11 +241,11 @@ async function sendWelcomeEmail(lead: Lead) {
       `;
     }
 
-    console.log(`📤 Sending welcome email to: tmtnextgenpartners@gmail.com`);
+    console.log(`📤 Sending welcome email to: ${lead.email}`);
     
     const { data: emailResult, error } = await resend.emails.send({
       from: 'TMT Next Gen Partners <onboarding@resend.dev>',
-      to: ['tmtnextgenpartners@gmail.com'], // Use verified email for testing - change to lead.email when domain is verified
+      to: [lead.email],
       subject: `Welcome ${lead.first_name || ''}! Your consultation request has been received`,
       html,
     });
