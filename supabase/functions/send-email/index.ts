@@ -41,16 +41,17 @@ try {
   
   React = await import("https://esm.sh/react@18.3.1");
   console.log('✅ React loaded');
+  console.log('✅ React version in function:', React.version);
   
-  const reactEmailModule = await import("https://esm.sh/@react-email/components@0.0.22");
+  const reactEmailModule = await import("https://esm.sh/@react-email/components@0.0.22?deps=react@18.3.1");
   renderAsync = reactEmailModule.renderAsync;
   console.log('✅ React Email loaded');
   
-  const leadNotificationModule = await import('./_templates/lead-notification.tsx');
+  const leadNotificationModule = await import('./_templates/lead-notification.tsx?deps=react@18.3.1');
   LeadNotificationEmail = leadNotificationModule.LeadNotificationEmail;
   console.log('✅ Lead notification template loaded');
   
-  const welcomeEmailModule = await import('./_templates/welcome-email.tsx');
+  const welcomeEmailModule = await import('./_templates/welcome-email.tsx?deps=react@18.3.1');
   WelcomeEmail = welcomeEmailModule.WelcomeEmail;
   console.log('✅ Welcome email template loaded');
   
@@ -150,11 +151,23 @@ async function sendLeadNotificationEmail(lead: Lead) {
 
     console.log('🎨 Rendering email template with data:', templateData);
     
-    const html = await renderAsync(
-      React.createElement(LeadNotificationEmail, templateData)
-    );
-    
-    console.log('✅ Email template rendered successfully');
+    let html: string;
+    try {
+      html = await renderAsync(
+        React.createElement(LeadNotificationEmail, templateData)
+      );
+      console.log('✅ Email template rendered successfully');
+    } catch (renderError) {
+      console.error('❌ Template rendering failed, using fallback HTML:', renderError);
+      html = `
+        <h1>New Lead Notification</h1>
+        <p><strong>Name:</strong> ${templateData.first_name} ${templateData.last_name}</p>
+        <p><strong>Email:</strong> ${templateData.email}</p>
+        <p><strong>Company:</strong> ${templateData.company_name}</p>
+        <p><strong>Score:</strong> ${templateData.score}</p>
+        <p><a href="${templateData.admin_url}">View in Admin Dashboard</a></p>
+      `;
+    }
 
   for (const admin of adminProfiles) {
     try {
@@ -213,11 +226,20 @@ async function sendWelcomeEmail(lead: Lead) {
 
     console.log('🎨 Rendering welcome email template with data:', templateData);
 
-    const html = await renderAsync(
-      React.createElement(WelcomeEmail, templateData)
-    );
-    
-    console.log('✅ Welcome email template rendered successfully');
+    let html: string;
+    try {
+      html = await renderAsync(
+        React.createElement(WelcomeEmail, templateData)
+      );
+      console.log('✅ Welcome email template rendered successfully');
+    } catch (renderError) {
+      console.error('❌ Template rendering failed, using fallback HTML:', renderError);
+      html = `
+        <h1>Welcome, ${templateData.first_name}!</h1>
+        <p>Thank you for your consultation request. We'll be in touch soon!</p>
+        <p>Best regards,<br>The Business Process Team</p>
+      `;
+    }
 
     console.log(`📤 Sending welcome email to: tmtnextgenpartners@gmail.com`);
     

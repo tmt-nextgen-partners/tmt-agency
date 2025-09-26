@@ -8,7 +8,7 @@ import {
   Section,
   Text,
 } from 'https://esm.sh/@react-email/components@0.0.22';
-import React from 'https://esm.sh/react@18.3.1';
+import React from 'https://esm.sh/react@18.3.1?deps=react@18.3.1';
 
 interface WelcomeEmailProps {
   first_name: string;
