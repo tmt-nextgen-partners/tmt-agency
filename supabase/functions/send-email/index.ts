@@ -132,7 +132,7 @@ async function sendLeadNotificationEmail(lead: Lead) {
     .eq('id', lead.source_id)
     .single();
 
-  const adminUrl = `${SUPABASE_URL?.replace('.supabase.co', '')}/admin`;
+  const adminUrl = `https://tmt-nextgen-partners.com/admin`;
   
   const templateData = {
     first_name: lead.first_name || '',
