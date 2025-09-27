@@ -34,7 +34,7 @@ export const Footer: React.FC = () => {
     <footer className="bg-secondary text-secondary-foreground">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Main Footer Content */}
-        <div className="py-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="py-16 grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Company Info */}
           <div className="space-y-6">
             <div className="flex items-center">
@@ -43,10 +43,6 @@ export const Footer: React.FC = () => {
               </div>
               <H5 className="text-lg font-bold">TMT NextGen Partners</H5>
             </div>
-            <Body className="text-sm">
-              Leading digital marketing agency specializing in business modernization 
-              and growth acceleration through innovative marketing strategies.
-            </Body>
             
             {/* Contact Info */}
             <div className="space-y-3">
@@ -67,40 +63,6 @@ export const Footer: React.FC = () => {
                 <span className="text-sm">1735 W Diversey Parkway<br />Chicago, IL 60614</span>
               </div>
             </div>
-          </div>
-
-          {/* Services */}
-          <div className="space-y-6">
-            <H5 className="text-base font-semibold">Our Services</H5>
-            <ul className="space-y-3">
-              {services.map((service) => (
-                <li key={service}>
-                  <a 
-                    href={`#${service.toLowerCase().replace(/\s+/g, '-')}`}
-                    className="text-sm text-secondary-foreground/80 hover:text-primary transition-colors"
-                  >
-                    {service}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Resources */}
-          <div className="space-y-6">
-            <H5 className="text-base font-semibold">Resources</H5>
-            <ul className="space-y-3">
-              {resources.map((resource) => (
-                <li key={resource}>
-                  <a 
-                    href={`#${resource.toLowerCase().replace(/\s+/g, '-')}`}
-                    className="text-sm text-secondary-foreground/80 hover:text-primary transition-colors"
-                  >
-                    {resource}
-                  </a>
-                </li>
-              ))}
-            </ul>
           </div>
 
           {/* Business Info & Certifications */}
