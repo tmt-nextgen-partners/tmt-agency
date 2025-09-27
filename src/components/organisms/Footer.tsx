@@ -11,30 +11,13 @@ import {
   Clock
 } from 'lucide-react';
 
-const services = [
-  "Web Design & Development",
-  "Search Engine Optimization", 
-  "Pay-Per-Click Advertising",
-  "Social Media Marketing",
-  "Content Marketing",
-  "Analytics & Reporting"
-];
-
-const resources = [
-  "Case Studies",
-  "Marketing Blog",
-  "Industry Reports",
-  "Free Resources",
-  "Success Stories",
-  "Client Portal"
-];
 
 export const Footer: React.FC = () => {
   return (
     <footer className="bg-secondary text-secondary-foreground">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Main Footer Content */}
-        <div className="py-16 grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="py-16 grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Company Info */}
           <div className="space-y-6">
             <div className="flex items-center">
@@ -65,7 +48,7 @@ export const Footer: React.FC = () => {
             </div>
           </div>
 
-          {/* Business Info & Certifications */}
+          {/* Business Hours */}
           <div className="space-y-6">
             <H5 className="text-base font-semibold">Business Hours</H5>
             <div className="space-y-2">
@@ -82,23 +65,23 @@ export const Footer: React.FC = () => {
                 <span className="text-sm">Sun: Closed</span>
               </div>
             </div>
+          </div>
 
-            {/* Certifications */}
-            <div className="space-y-3">
-              <H5 className="text-base font-semibold">Certifications</H5>
-              <div className="space-y-2">
-                <div className="flex items-center space-x-2">
-                  <Award className="w-4 h-4 text-success" />
-                  <span className="text-sm">Google Certified Partner</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Award className="w-4 h-4 text-success" />
-                  <span className="text-sm">Facebook Marketing Partner</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Award className="w-4 h-4 text-success" />
-                  <span className="text-sm">HubSpot Certified Agency</span>
-                </div>
+          {/* Certifications */}
+          <div className="space-y-6">
+            <H5 className="text-base font-semibold">Certifications</H5>
+            <div className="space-y-2">
+              <div className="flex items-center space-x-2">
+                <Award className="w-4 h-4 text-success" />
+                <span className="text-sm">Google Certified Partner</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Award className="w-4 h-4 text-success" />
+                <span className="text-sm">Facebook Marketing Partner</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Award className="w-4 h-4 text-success" />
+                <span className="text-sm">HubSpot Certified Agency</span>
               </div>
             </div>
           </div>
