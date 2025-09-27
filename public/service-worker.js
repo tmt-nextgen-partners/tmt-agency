@@ -1,10 +1,9 @@
-const CACHE_NAME = 'tmt-nextgen-v3';
-const STATIC_CACHE_URLS = [
+const CACHE_NAME = 'tmt-nextgen-v5';
+const PRECACHE_RESOURCES = [
   '/',
   '/index.html',
-  '/src/main.tsx',
-  '/src/index.css',
-  '/assets/hero-business-team.jpg'
+  '/favicon.ico',
+  '/manifest.json'
 ];
 
 console.log('Service Worker: Cache version', CACHE_NAME);
@@ -13,7 +12,7 @@ console.log('Service Worker: Cache version', CACHE_NAME);
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(STATIC_CACHE_URLS))
+      .then((cache) => cache.addAll(PRECACHE_RESOURCES))
       .then(() => self.skipWaiting())
   );
 });
@@ -35,34 +34,50 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch event - serve from cache with network fallback
+// Fetch event - network-first for navigations, stale-while-revalidate for assets
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
-  event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        if (response) {
-          return response;
-        }
-        return fetch(event.request)
-          .then((response) => {
-            if (!response || response.status !== 200 || response.type !== 'basic') {
-              return response;
-            }
+  // Network-first for navigation requests (HTML pages)
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          if (response && response.status === 200) {
             const responseToCache = response.clone();
             caches.open(CACHE_NAME)
               .then((cache) => {
                 cache.put(event.request, responseToCache);
               });
+          }
+          return response;
+        })
+        .catch(() => {
+          // Offline fallback for navigation
+          return caches.match('/') || caches.match('/index.html');
+        })
+    );
+    return;
+  }
+
+  // Stale-while-revalidate for other GET requests
+  event.respondWith(
+    caches.match(event.request)
+      .then((cachedResponse) => {
+        const fetchPromise = fetch(event.request)
+          .then((response) => {
+            if (response && response.status === 200 && response.type === 'basic') {
+              const responseToCache = response.clone();
+              caches.open(CACHE_NAME)
+                .then((cache) => {
+                  cache.put(event.request, responseToCache);
+                });
+            }
             return response;
           });
-      })
-      .catch(() => {
-        // Offline fallback
-        if (event.request.destination === 'document') {
-          return caches.match('/');
-        }
+
+        // Return cached version immediately if available, update cache in background
+        return cachedResponse || fetchPromise;
       })
   );
 });

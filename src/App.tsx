@@ -22,9 +22,27 @@ const App = () => {
     if (typeof window !== 'undefined') {
       measureCoreWebVitals();
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/service-worker.js').catch((err) => {
-          console.error('Service Worker registration failed:', err);
-        });
+        navigator.serviceWorker.register('/service-worker.js')
+          .then((registration) => {
+            // Force check for updates
+            registration.update();
+            
+            // Handle updates
+            registration.addEventListener('updatefound', () => {
+              const newWorker = registration.installing;
+              if (newWorker) {
+                newWorker.addEventListener('statechange', () => {
+                  if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                    // New content available, reload automatically
+                    window.location.reload();
+                  }
+                });
+              }
+            });
+          })
+          .catch((err) => {
+            console.error('Service Worker registration failed:', err);
+          });
       }
     }
   }, []);
