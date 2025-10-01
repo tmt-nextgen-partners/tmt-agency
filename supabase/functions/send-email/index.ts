@@ -107,23 +107,48 @@ async function sendLeadNotificationEmail(lead: Lead) {
   console.log(`📧 Starting lead notification email for lead: ${lead.id}`);
   
   try {
-    // Get admin emails from profiles
-    const { data: adminProfiles, error: adminError } = await supabase
-      .from('profiles')
-      .select('email')
+    // Step 1: Get admin user_ids from user_roles table
+    const { data: adminRoles, error: rolesError } = await supabase
+      .from('user_roles')
+      .select('user_id')
       .eq('role', 'admin');
 
-    if (adminError) {
-      console.error('❌ Error fetching admin profiles:', adminError);
-      throw adminError;
+    if (rolesError) {
+      console.error('❌ Error fetching admin roles:', rolesError);
+      throw rolesError;
     }
 
-    if (!adminProfiles || adminProfiles.length === 0) {
-      console.warn('⚠️ No admin profiles found for notifications');
-      return;
+    const adminUserIds = (adminRoles || []).map(r => r.user_id);
+    console.log(`✅ Found ${adminUserIds.length} admin user_id(s)`);
+
+    // Step 2: Get emails from profiles for those user_ids
+    let recipients: string[] = [];
+    
+    if (adminUserIds.length > 0) {
+      const { data: profileRows, error: profileError } = await supabase
+        .from('profiles')
+        .select('email')
+        .in('user_id', adminUserIds);
+
+      if (profileError) {
+        console.error('❌ Error fetching admin profiles:', profileError);
+      } else {
+        recipients = (profileRows || [])
+          .map(p => p.email)
+          .filter(email => email && email.trim() !== '');
+      }
     }
 
-    console.log(`✅ Found ${adminProfiles.length} admin(s) for notifications`);
+    // Step 3: Always include guaranteed admin email
+    const GUARANTEED_ADMIN = 'tmtnextgenpartners@gmail.com';
+    if (!recipients.includes(GUARANTEED_ADMIN)) {
+      recipients.push(GUARANTEED_ADMIN);
+    }
+
+    // Remove duplicates
+    recipients = [...new Set(recipients)];
+
+    console.log(`✅ Sending to ${recipients.length} recipient(s):`, recipients);
 
   // Get lead source info
   const { data: sourceData } = await supabase
@@ -169,13 +194,13 @@ async function sendLeadNotificationEmail(lead: Lead) {
       `;
     }
 
-  for (const admin of adminProfiles) {
+  for (const recipientEmail of recipients) {
     try {
-      console.log(`📤 Sending notification email to: ${admin.email}`);
+      console.log(`📤 Sending notification email to: ${recipientEmail}`);
       
       const { data: emailResult, error } = await resend.emails.send({
         from: 'TMT Next Gen Partners <notifications@tmt-nextgen-partners.com>',
-        to: [admin.email],
+        to: [recipientEmail],
         subject: `New Lead Received - ${lead.first_name || ''} ${lead.last_name || ''}`,
         html,
       });
@@ -185,7 +210,7 @@ async function sendLeadNotificationEmail(lead: Lead) {
       // Log the email
       await supabase.from('email_logs').insert({
         email_id: emailResult?.id,
-        recipient_email: admin.email,
+        recipient_email: recipientEmail,
         lead_id: lead.id,
         subject: `New Lead Received - ${lead.first_name || ''} ${lead.last_name || ''}`,
         status: error ? 'failed' : 'sent',
@@ -197,10 +222,10 @@ async function sendLeadNotificationEmail(lead: Lead) {
       if (error) {
         console.error('❌ Error sending notification email:', error);
       } else {
-        console.log('✅ Notification email sent successfully to:', admin.email);
+        console.log('✅ Notification email sent successfully to:', recipientEmail);
       }
     } catch (error) {
-      console.error('❌ Failed to send email to admin:', admin.email, error);
+      console.error('❌ Failed to send email to:', recipientEmail, error);
       throw error; // Re-throw to handle at higher level
     }
   }
