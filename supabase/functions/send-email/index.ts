@@ -107,11 +107,11 @@ async function sendLeadNotificationEmail(lead: Lead) {
   console.log(`📧 Starting lead notification email for lead: ${lead.id}`);
   
   try {
-    // Get admin emails from profiles
+    // Get admin emails from profiles by joining with user_roles
     const { data: adminProfiles, error: adminError } = await supabase
       .from('profiles')
-      .select('email')
-      .eq('role', 'admin');
+      .select('email, user_roles!inner(role)')
+      .eq('user_roles.role', 'admin');
 
     if (adminError) {
       console.error('❌ Error fetching admin profiles:', adminError);
