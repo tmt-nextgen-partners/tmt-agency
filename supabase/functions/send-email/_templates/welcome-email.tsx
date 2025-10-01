@@ -41,45 +41,33 @@ export const WelcomeEmail = ({
           <Heading style={h2}>What happens next:</Heading>
           
           <Section style={stepSection}>
-            <table cellPadding="0" cellSpacing="0" style={{width: '100%'}}>
-              <tr>
-                <td style={{...stepNumber, display: 'table-cell', textAlign: 'center', verticalAlign: 'middle'}}>1</td>
-                <td style={stepContent}>
-                  <Text style={stepTitle}>Review & Analysis</Text>
-                  <Text style={stepDescription}>
-                    Our team will carefully review your information and business requirements
-                  </Text>
-                </td>
-              </tr>
-            </table>
+            <div style={stepNumber}>1</div>
+            <div style={stepContent}>
+              <Text style={stepTitle}>Review & Analysis</Text>
+              <Text style={stepDescription}>
+                Our team will carefully review your information and business requirements
+              </Text>
+            </div>
           </Section>
 
           <Section style={stepSection}>
-            <table cellPadding="0" cellSpacing="0" style={{width: '100%'}}>
-              <tr>
-                <td style={{...stepNumber, display: 'table-cell', textAlign: 'center', verticalAlign: 'middle'}}>2</td>
-                <td style={stepContent}>
-                  <Text style={stepTitle}>Consultation Preparation</Text>
-                  <Text style={stepDescription}>
-                    We will prepare a customized consultation agenda tailored to your specific needs
-                  </Text>
-                </td>
-              </tr>
-            </table>
+            <div style={stepNumber}>2</div>
+            <div style={stepContent}>
+              <Text style={stepTitle}>Consultation Preparation</Text>
+              <Text style={stepDescription}>
+                We will prepare a customized consultation agenda tailored to your specific needs
+              </Text>
+            </div>
           </Section>
 
           <Section style={stepSection}>
-            <table cellPadding="0" cellSpacing="0" style={{width: '100%'}}>
-              <tr>
-                <td style={{...stepNumber, display: 'table-cell', textAlign: 'center', verticalAlign: 'middle'}}>3</td>
-                <td style={stepContent}>
-                  <Text style={stepTitle}>Schedule Your Session</Text>
-                  <Text style={stepDescription}>
-                    You will receive a calendar link to schedule your free consultation within 24 hours
-                  </Text>
-                </td>
-              </tr>
-            </table>
+            <div style={stepNumber}>3</div>
+            <div style={stepContent}>
+              <Text style={stepTitle}>Schedule Your Session</Text>
+              <Text style={stepDescription}>
+                You will receive a calendar link to schedule your free consultation within 24 hours
+              </Text>
+            </div>
           </Section>
 
           <Section style={calloutSection}>
@@ -179,10 +167,13 @@ const stepNumber = {
   borderRadius: '50%',
   width: '32px',
   height: '32px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
   fontSize: '16px',
-  fontWeight: 'bold' as const,
-  paddingRight: '16px',
-  minWidth: '32px',
+  fontWeight: 'bold',
+  marginRight: '16px',
+  flexShrink: 0,
 };
 
 const stepContent = {
