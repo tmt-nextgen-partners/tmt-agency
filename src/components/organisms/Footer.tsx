@@ -24,7 +24,7 @@ export const Footer: React.FC = () => {
               <div className="bg-gradient-primary p-2 rounded-lg mr-3">
                 <div className="w-6 h-6 bg-primary-foreground rounded-sm" />
               </div>
-              <H5 className="text-lg font-bold">TMT NextGen Partners</H5>
+              <H5 className="text-lg font-bold text-foreground">TMT NextGen Partners</H5>
             </div>
             
             {/* Contact Info */}
@@ -50,7 +50,7 @@ export const Footer: React.FC = () => {
 
           {/* Business Hours */}
           <div className="space-y-6">
-            <H5 className="text-base font-semibold">Business Hours</H5>
+            <H5 className="text-lg font-bold text-foreground">Business Hours</H5>
             <div className="space-y-2">
               <div className="flex items-center space-x-2">
                 <Clock className="w-4 h-4 text-primary" />
@@ -69,7 +69,7 @@ export const Footer: React.FC = () => {
 
           {/* Certifications */}
           <div className="space-y-6">
-            <H5 className="text-base font-semibold">Certifications</H5>
+            <H5 className="text-lg font-bold text-foreground">Certifications</H5>
             <div className="space-y-2">
               <div className="flex items-center space-x-2">
                 <Award className="w-4 h-4 text-success" />
