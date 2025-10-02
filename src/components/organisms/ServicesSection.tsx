@@ -6,10 +6,10 @@ import { useConsultationModal } from '@/contexts/ConsultationModalContext';
 import { 
   Cog, 
   Zap, 
-  TrendingUp, 
   Database, 
   Workflow, 
-  BarChart3 
+  BarChart3,
+  Code
 } from 'lucide-react';
 
 const services = [
@@ -24,9 +24,9 @@ const services = [
     description: "Automate repetitive tasks and workflows to save time, reduce errors, and free up your team for strategic work."
   },
   {
-    icon: TrendingUp,
-    title: "Performance Analytics",
-    description: "Gain deep insights into your business performance with advanced analytics and KPI tracking systems."
+    icon: BarChart3,
+    title: "Personalized Performance Dashboards",
+    description: "Custom analytics dashboards that track KPIs, measure ROI, and provide actionable insights to optimize your business performance in real-time."
   },
   {
     icon: Database,
@@ -39,9 +39,9 @@ const services = [
     description: "Comprehensive roadmap to modernize your business processes and embrace digital-first operations."
   },
   {
-    icon: BarChart3,
-    title: "ROI Measurement & Optimization",
-    description: "Track the impact of process improvements with transparent reporting and continuous optimization."
+    icon: Code,
+    title: "Web Application Development",
+    description: "Build custom web applications tailored to your business needs, from customer portals to internal tools that streamline operations."
   }
 ];
 
