@@ -18,21 +18,23 @@ export const AboutSection: React.FC = () => {
             {/* Mission Statement */}
             <div className="lg:col-span-2 space-y-6">
               <BodyLarge>
-                At TMT NextGen Partners, we bridge the gap between traditional business operations and the digital future. 
-                As a specialized business modernization agency, we understand that small businesses are the backbone of the 
-                economy, yet many struggle to navigate the complexities of digital transformation.
+                At TMT NextGen Partners, we democratize enterprise capabilities for small businesses through agentic AI 
+                solutions. As a specialized business modernization agency, we understand that small businesses are the 
+                backbone of the economy, yet have traditionally lacked access to the sophisticated automation tools that 
+                drive large corporation success.
               </BodyLarge>
               
               <BodyLarge>
-                Our mission is simple: to empower small businesses with cutting-edge technology solutions, streamlined 
-                processes, and strategic insights that unlock growth potential in today's digital marketplace. We don't 
-                just implement technology—we reimagine how your business can thrive in the modern era.
+                Our mission is simple: to make powerful agentic AI products and custom automation solutions affordable and 
+                accessible for any business. We leverage cutting-edge AI-driven technology to deliver enterprise-level 
+                capabilities at a fraction of traditional costs, ensuring every business can compete in the digital marketplace 
+                regardless of size or budget.
               </BodyLarge>
               
               <BodyLarge>
-                From automating workflows and enhancing customer experiences to building robust digital infrastructures, 
-                we serve as your trusted partner in propelling your business beyond the limitations of yesterday into the 
-                limitless possibilities of tomorrow.
+                From intelligent workflow automation and AI-powered customer experiences to adaptive business process optimization, 
+                we serve as your trusted partner in integrating transformational AI into your operations. We don't just implement 
+                technology—we reimagine how your business can thrive with the power of agentic AI at your fingertips.
               </BodyLarge>
             </div>
 

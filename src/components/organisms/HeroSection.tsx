@@ -36,8 +36,9 @@ export const HeroSection: React.FC = () => {
                 </span>
               </H1>
               <BodyLarge>
-                We help small and medium businesses modernize their operations through 
-                cutting-edge process optimization and automation that drive real, measurable efficiency.
+                We bring enterprise-level capabilities to small businesses through agentic AI products and custom solutions 
+                at a fraction of traditional costs. Our intelligent automation expands your operations and unlocks growth 
+                potential previously reserved for large corporations.
               </BodyLarge>
             </div>
 

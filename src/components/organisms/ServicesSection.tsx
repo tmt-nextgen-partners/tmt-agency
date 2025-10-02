@@ -77,16 +77,16 @@ export const ServicesSection: React.FC = () => {
         {/* Bottom CTA */}
         <div className="text-center mt-16">
           <div className="bg-gradient-subtle rounded-2xl p-8 border border-border">
-            <H2 className="mb-4">Need a Custom Transformation?</H2>
+            <H2 className="mb-4">Start the Conversation Today to Implement Any of These Services in Your Business</H2>
             <BodyLarge className="mb-6">
-              Every business has unique processes. Let's discuss how our automation solutions can be tailored to your specific workflows.
+              Begin with a free consultation to discuss how we can help transform your business. No cost, no obligation - just valuable insights from our business transformation experts.
             </BodyLarge>
             <Button 
               onClick={openModal}
               size="lg"
               className="bg-gradient-primary hover:shadow-glow hover:scale-105 transform transition-all duration-300"
             >
-              Schedule Process Assessment
+              Get Your Free Consultation
             </Button>
           </div>
         </div>

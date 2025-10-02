@@ -85,6 +85,10 @@ export const Footer: React.FC = () => {
               </div>
               <div className="flex items-center space-x-2">
                 <Award className="w-4 h-4 text-success" />
+                <span className="text-sm">Agentic AI Product Development Specialist</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Award className="w-4 h-4 text-success" />
                 <span className="text-sm">HubSpot Certified Agency</span>
               </div>
               <div className="flex items-center space-x-2">
