@@ -44,7 +44,7 @@ export const HeroSection: React.FC = () => {
             {/* Key Stats */}
             <div className="grid grid-cols-3 gap-6 py-6">
               <div className="text-center">
-                <div className="text-3xl font-bold text-primary">500+</div>
+                <div className="text-3xl font-bold text-primary">100+</div>
                 <div className="text-sm text-muted-foreground">Clients Served</div>
               </div>
               <div className="text-center">
@@ -52,7 +52,7 @@ export const HeroSection: React.FC = () => {
                 <div className="text-sm text-muted-foreground">Avg ROI</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-warning">8+</div>
+                <div className="text-3xl font-bold text-warning">5+</div>
                 <div className="text-sm text-muted-foreground">Years Experience</div>
               </div>
             </div>

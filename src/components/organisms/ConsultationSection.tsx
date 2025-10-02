@@ -75,11 +75,11 @@ export const ConsultationSection: React.FC = () => {
                 </div>
                 <div className="flex items-center space-x-3">
                   <CheckCircle className="w-4 h-4 text-success flex-shrink-0" />
-                  <span className="text-sm text-muted-foreground">8+ Years of Business Transformation</span>
+                  <span className="text-sm text-muted-foreground">5+ Years of Business Transformation</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <CheckCircle className="w-4 h-4 text-success flex-shrink-0" />
-                  <span className="text-sm text-muted-foreground">500+ Successful Automation Projects</span>
+                  <span className="text-sm text-muted-foreground">100+ Successful Automation Projects</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <CheckCircle className="w-4 h-4 text-success flex-shrink-0" />

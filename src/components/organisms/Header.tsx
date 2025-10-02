@@ -22,7 +22,7 @@ export const Header: React.FC = () => {
           {/* Logo */}
           <div className="flex items-center">
             <div className="bg-gradient-primary p-2 rounded-lg mr-3">
-              <div className="w-6 h-6 bg-primary-foreground rounded-sm" />
+              <span className="text-primary-foreground font-bold text-sm leading-none">TMT</span>
             </div>
             <H5 className="text-lg font-bold bg-gradient-primary bg-clip-text text-transparent">
               TMT NextGen Partners

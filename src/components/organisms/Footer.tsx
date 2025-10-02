@@ -73,15 +73,15 @@ export const Footer: React.FC = () => {
             <div className="space-y-2">
               <div className="flex items-center space-x-2">
                 <Award className="w-4 h-4 text-success" />
-                <span className="text-sm">Google Certified Partner</span>
+                <span className="text-sm">Google Analytics Certified Professional</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Award className="w-4 h-4 text-success" />
-                <span className="text-sm">Facebook Marketing Partner</span>
+                <span className="text-sm">Microsoft Power BI Certified Analyst</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Award className="w-4 h-4 text-success" />
-                <span className="text-sm">HubSpot Certified Agency</span>
+                <span className="text-sm">Certified Business Process Professional</span>
               </div>
             </div>
           </div>
