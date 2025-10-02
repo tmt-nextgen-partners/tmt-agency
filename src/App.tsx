@@ -56,6 +56,7 @@ const App = () => {
               <Toaster />
               <Sonner />
               <BrowserRouter>
+                <ConsultationModal />
                 <Routes>
                   <Route path="/" element={<Index />} />
                   <Route path="/auth" element={<Auth />} />
@@ -64,7 +65,6 @@ const App = () => {
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </BrowserRouter>
-              <ConsultationModal />
             </TooltipProvider>
           </ConsultationModalProvider>
         </AuthProvider>
