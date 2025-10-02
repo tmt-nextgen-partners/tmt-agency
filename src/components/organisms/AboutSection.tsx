@@ -4,17 +4,17 @@ import { Building2, Target, Lightbulb } from 'lucide-react';
 
 export const AboutSection: React.FC = () => {
   return (
-    <section id="about" className="py-16 bg-muted/30">
+    <section id="about" className="py-20 bg-muted/30">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center max-w-4xl mx-auto mb-12 space-y-4">
+        <div className="text-center max-w-4xl mx-auto mb-16 space-y-4">
           <Caption className="text-primary">ABOUT TMT NEXTGEN PARTNERS</Caption>
           <H2>Bridging Traditional Business with Digital Innovation</H2>
         </div>
 
         {/* Main Content */}
         <div className="max-w-5xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 mb-12">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-16">
             {/* Mission Statement */}
             <div className="lg:col-span-2 space-y-6">
               <BodyLarge>
@@ -37,7 +37,7 @@ export const AboutSection: React.FC = () => {
             </div>
 
             {/* Key Values */}
-            <div className="space-y-6">
+            <div className="space-y-8">
               <div className="space-y-4">
                 <div className="flex items-center space-x-3">
                   <div className="bg-gradient-primary p-2 rounded-lg">
@@ -64,8 +64,9 @@ export const AboutSection: React.FC = () => {
 
               <div className="space-y-4">
                 <div className="flex items-center space-x-3">
-                  <div className="bg-accent p-3 rounded-lg shadow-glow">
-                    <Lightbulb className="w-6 h-6 text-accent-foreground" />
+                  <div className="bg-gradient-accent p-3 rounded-lg relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-br from-accent/20 to-transparent" />
+                    <Lightbulb className="w-6 h-6 text-accent-foreground relative z-10" />
                   </div>
                   <H2 className="text-lg">Vision</H2>
                 </div>
