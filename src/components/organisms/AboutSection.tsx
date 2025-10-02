@@ -64,9 +64,8 @@ export const AboutSection: React.FC = () => {
 
               <div className="space-y-4">
                 <div className="flex items-center space-x-3">
-                  <div className="bg-gradient-accent p-4 rounded-lg relative overflow-hidden shadow-lg">
-                    <div className="absolute inset-0 bg-gradient-to-br from-accent/30 to-transparent" />
-                    <Lightbulb className="w-8 h-8 text-accent-foreground relative z-10 drop-shadow-md" />
+                  <div className="bg-accent p-3 rounded-lg shadow-glow">
+                    <Lightbulb className="w-6 h-6 text-accent-foreground" />
                   </div>
                   <H2 className="text-lg">Vision</H2>
                 </div>
