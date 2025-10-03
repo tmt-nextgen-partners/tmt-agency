@@ -5,6 +5,7 @@ import { H5 } from '../atoms/Typography';
 import { Menu, X, Phone, Shield } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useConsultationModal } from '@/contexts/ConsultationModalContext';
+import tmtLogo from '@/assets/tmt-logo.png';
 
 export const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -21,9 +22,7 @@ export const Header: React.FC = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <div className="bg-gradient-primary p-2 rounded-lg mr-3">
-              <span className="text-primary-foreground font-bold text-sm leading-none">TMT</span>
-            </div>
+            <img src={tmtLogo} alt="TMT NextGen Partners" className="h-10 w-auto mr-3" />
             <H5 className="text-lg font-bold bg-gradient-primary bg-clip-text text-transparent">
               TMT NextGen Partners
             </H5>

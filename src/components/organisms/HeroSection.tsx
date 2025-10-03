@@ -30,9 +30,9 @@ export const HeroSection: React.FC = () => {
             {/* Main Headline */}
             <div className="space-y-4">
               <H1 className="leading-tight">
-                Transform Your Business with{' '}
+                Modernize Your Business with{' '}
                 <span className="bg-gradient-primary bg-clip-text text-transparent">
-                  Process Automation
+                  Process Optimization
                 </span>
               </H1>
               <BodyLarge>

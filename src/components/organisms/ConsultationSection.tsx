@@ -37,9 +37,13 @@ export const ConsultationSection: React.FC = () => {
               <Caption className="text-primary">FREE PROCESS AUDIT</Caption>
               <H2>Ready to Optimize Your Operations?</H2>
               <BodyLarge>
-                Get expert insights and a custom automation strategy tailored specifically 
-                to your business processes. No cost, no obligation - just valuable advice from 
-                business transformation professionals.
+                Discover how AI-powered automation and intelligent process optimization can transform your operations. 
+                Get expert insights, real-time performance reporting, and a custom automation strategy tailored specifically 
+                to your business processes. Our comprehensive assessment includes workflow analysis, ROI projections, and 
+                actionable recommendations to streamline operations, reduce costs, and boost efficiency. We leverage advanced 
+                AI technologies, automated reporting dashboards, and process intelligence to identify opportunities you may 
+                have never considered. No cost, no obligation - just valuable advice from business transformation professionals 
+                who understand your challenges and can deliver measurable results.
               </BodyLarge>
             </div>
 
@@ -84,6 +88,22 @@ export const ConsultationSection: React.FC = () => {
                 <div className="flex items-center space-x-3">
                   <CheckCircle className="w-4 h-4 text-success flex-shrink-0" />
                   <span className="text-sm text-muted-foreground">Transparent Process & ROI Reporting</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <CheckCircle className="w-4 h-4 text-success flex-shrink-0" />
+                  <span className="text-sm text-muted-foreground">AI Integration & Automation Expertise</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <CheckCircle className="w-4 h-4 text-success flex-shrink-0" />
+                  <span className="text-sm text-muted-foreground">Advanced Reporting & Analytics Dashboards</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <CheckCircle className="w-4 h-4 text-success flex-shrink-0" />
+                  <span className="text-sm text-muted-foreground">Custom Dashboard Development</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <CheckCircle className="w-4 h-4 text-success flex-shrink-0" />
+                  <span className="text-sm text-muted-foreground">Enterprise-Grade Solutions for SMBs</span>
                 </div>
               </div>
             </div>

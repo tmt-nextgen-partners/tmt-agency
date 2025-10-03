@@ -10,6 +10,7 @@ import {
   Award,
   Clock
 } from 'lucide-react';
+import tmtLogo from '@/assets/tmt-logo.png';
 
 
 export const Footer: React.FC = () => {
@@ -21,9 +22,7 @@ export const Footer: React.FC = () => {
           {/* Company Info */}
           <div className="space-y-6">
             <div className="flex items-center">
-              <div className="bg-gradient-primary p-2 rounded-lg mr-3">
-                <div className="w-6 h-6 bg-primary-foreground rounded-sm" />
-              </div>
+              <img src={tmtLogo} alt="TMT NextGen Partners" className="h-10 w-auto mr-3" />
               <H5 className="text-lg font-bold">TMT NextGen Partners</H5>
             </div>
             
