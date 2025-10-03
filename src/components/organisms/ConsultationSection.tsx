@@ -79,23 +79,11 @@ export const ConsultationSection: React.FC = () => {
                 </div>
                 <div className="flex items-center space-x-3">
                   <CheckCircle className="w-4 h-4 text-success flex-shrink-0" />
-                  <span className="text-sm text-muted-foreground">5+ Years of Business Transformation</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <CheckCircle className="w-4 h-4 text-success flex-shrink-0" />
-                  <span className="text-sm text-muted-foreground">100+ Successful Automation Projects</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <CheckCircle className="w-4 h-4 text-success flex-shrink-0" />
                   <span className="text-sm text-muted-foreground">Transparent Process & ROI Reporting</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <CheckCircle className="w-4 h-4 text-success flex-shrink-0" />
                   <span className="text-sm text-muted-foreground">AI Integration & Automation Expertise</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <CheckCircle className="w-4 h-4 text-success flex-shrink-0" />
-                  <span className="text-sm text-muted-foreground">Advanced Reporting & Analytics Dashboards</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <CheckCircle className="w-4 h-4 text-success flex-shrink-0" />
