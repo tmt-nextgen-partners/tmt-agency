@@ -10,7 +10,7 @@ import {
   Award,
   Clock
 } from 'lucide-react';
-import tmtLogo from '@/assets/tmt-logo.png';
+import tmtLogo from '@/assets/tmt-logo-dark.png';
 
 
 export const Footer: React.FC = () => {
