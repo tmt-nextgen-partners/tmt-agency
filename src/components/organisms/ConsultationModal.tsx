@@ -14,9 +14,7 @@ import { Button } from '@/components/atoms/Button';
 import { ArrowLeft } from 'lucide-react';
 import { H3, Body } from '@/components/atoms/Typography';
 
-// TODO: Replace with your actual Calendly URL
-// Get it from: https://calendly.com/event_types/user/me
-const CALENDLY_URL = 'https://calendly.com/your-calendly-username/consultation';
+const CALENDLY_URL = 'https://calendly.com/tmtnextgenpartners/free-business-audit-consultation';
 
 export const ConsultationModal: React.FC = () => {
   const { isOpen, closeModal, currentStep, leadData, setStep, resetModal } = useConsultationModal();
