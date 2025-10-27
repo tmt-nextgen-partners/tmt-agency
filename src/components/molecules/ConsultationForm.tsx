@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Calendar, Shield, Clock, Award } from "lucide-react";
 import { useLeads } from "@/hooks/useLeads";
 import { useToast } from "@/hooks/use-toast";
+import { useConsultationModal } from "@/contexts/ConsultationModalContext";
 
 const formSchema = z.object({
   firstName: z.string().min(2, "First name must be at least 2 characters"),
@@ -31,6 +32,7 @@ interface ConsultationFormProps {
 export const ConsultationForm: React.FC<ConsultationFormProps> = ({ isModal = false, onSuccess }) => {
   const { createLead, isCreating } = useLeads(false);
   const { toast } = useToast();
+  const { setStep, setLeadData } = useConsultationModal();
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -48,13 +50,33 @@ export const ConsultationForm: React.FC<ConsultationFormProps> = ({ isModal = fa
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      await createLead(values);
-      toast({
-        title: "Consultation Scheduled!",
-        description: "We'll contact you within 24 hours to schedule your free consultation.",
+      const leadResult = await createLead(values);
+      
+      // Store lead data for Calendly prefill
+      setLeadData({
+        leadId: leadResult?.id,
+        name: `${values.firstName} ${values.lastName}`,
+        email: values.email,
+        company: values.companyName,
+        budget: values.monthlyBudget,
+        goals: values.businessGoals,
+        challenges: values.challenges,
       });
+      
+      toast({
+        title: "Information Received!",
+        description: "Now let's schedule your consultation...",
+      });
+      
       form.reset();
-      onSuccess?.();
+      
+      // If in modal, move to scheduling step
+      if (isModal) {
+        setStep('scheduling');
+      } else {
+        // If not in modal, just call onSuccess
+        onSuccess?.();
+      }
     } catch (error) {
       toast({
         title: "Something went wrong",
