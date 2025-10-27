@@ -516,6 +516,7 @@ export type Database = {
         Row: {
           assigned_to: string | null
           business_goals: string | null
+          calendly_event_id: string | null
           challenges: string | null
           company_name: string | null
           created_at: string
@@ -524,6 +525,7 @@ export type Database = {
           id: string
           last_contacted_at: string | null
           last_name: string | null
+          meeting_scheduled_at: string | null
           monthly_budget: string | null
           notes: string | null
           phone: string | null
@@ -536,6 +538,7 @@ export type Database = {
         Insert: {
           assigned_to?: string | null
           business_goals?: string | null
+          calendly_event_id?: string | null
           challenges?: string | null
           company_name?: string | null
           created_at?: string
@@ -544,6 +547,7 @@ export type Database = {
           id?: string
           last_contacted_at?: string | null
           last_name?: string | null
+          meeting_scheduled_at?: string | null
           monthly_budget?: string | null
           notes?: string | null
           phone?: string | null
@@ -556,6 +560,7 @@ export type Database = {
         Update: {
           assigned_to?: string | null
           business_goals?: string | null
+          calendly_event_id?: string | null
           challenges?: string | null
           company_name?: string | null
           created_at?: string
@@ -564,6 +569,7 @@ export type Database = {
           id?: string
           last_contacted_at?: string | null
           last_name?: string | null
+          meeting_scheduled_at?: string | null
           monthly_budget?: string | null
           notes?: string | null
           phone?: string | null
@@ -591,7 +597,6 @@ export type Database = {
           first_name: string | null
           id: string
           last_name: string | null
-          role: string
           updated_at: string
           user_id: string | null
         }
@@ -602,7 +607,6 @@ export type Database = {
           first_name?: string | null
           id?: string
           last_name?: string | null
-          role?: string
           updated_at?: string
           user_id?: string | null
         }
@@ -613,9 +617,32 @@ export type Database = {
           first_name?: string | null
           id?: string
           last_name?: string | null
-          role?: string
           updated_at?: string
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          assigned_at: string
+          assigned_by: string | null
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          assigned_at?: string
+          assigned_by?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          assigned_at?: string
+          assigned_by?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
         }
         Relationships: []
       }
@@ -624,14 +651,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      calculate_lead_score: {
-        Args: { lead_data: Json }
-        Returns: number
-      }
-      is_admin: {
-        Args: Record<PropertyKey, never>
+      calculate_lead_score: { Args: { lead_data: Json }; Returns: number }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
         Returns: boolean
       }
+      is_admin: { Args: never; Returns: boolean }
     }
     Enums: {
       activity_type:
@@ -642,6 +670,7 @@ export type Database = {
         | "proposal_sent"
         | "follow_up"
         | "note_added"
+      app_role: "admin" | "moderator" | "user"
       lead_priority: "low" | "medium" | "high" | "urgent"
       lead_status:
         | "new"
@@ -651,6 +680,7 @@ export type Database = {
         | "negotiating"
         | "won"
         | "lost"
+        | "meeting_scheduled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -787,6 +817,7 @@ export const Constants = {
         "follow_up",
         "note_added",
       ],
+      app_role: ["admin", "moderator", "user"],
       lead_priority: ["low", "medium", "high", "urgent"],
       lead_status: [
         "new",
@@ -796,6 +827,7 @@ export const Constants = {
         "negotiating",
         "won",
         "lost",
+        "meeting_scheduled",
       ],
     },
   },

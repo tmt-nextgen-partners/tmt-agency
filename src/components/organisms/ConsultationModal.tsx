@@ -8,16 +8,21 @@ import {
 } from '@/components/ui/dialog';
 import { ConsultationForm } from '@/components/molecules/ConsultationForm';
 import { CalendlyWidget } from '@/components/molecules/CalendlyWidget';
+import { CalendlyInstructions } from '@/components/molecules/CalendlyInstructions';
 import { useConsultationModal } from '@/contexts/ConsultationModalContext';
 import { Button } from '@/components/atoms/Button';
-import { ArrowLeft, CheckCircle } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { H3, Body } from '@/components/atoms/Typography';
 
-// Replace with your actual Calendly URL
+// TODO: Replace with your actual Calendly URL
+// Get it from: https://calendly.com/event_types/user/me
 const CALENDLY_URL = 'https://calendly.com/your-calendly-username/consultation';
 
 export const ConsultationModal: React.FC = () => {
   const { isOpen, closeModal, currentStep, leadData, setStep, resetModal } = useConsultationModal();
+  
+  // Check if Calendly is configured
+  const isCalendlyConfigured = !CALENDLY_URL.includes('your-calendly-username');
 
   const handleClose = () => {
     closeModal();
@@ -68,20 +73,28 @@ export const ConsultationModal: React.FC = () => {
               </div>
             </div>
 
-            <CalendlyWidget
-              calendlyUrl={CALENDLY_URL}
-              prefill={{
-                name: leadData?.name,
-                email: leadData?.email,
-                customAnswers: {
-                  a1: leadData?.company || '',
-                  a2: leadData?.budget || '',
-                  a3: leadData?.goals || '',
-                  a4: leadData?.challenges || '',
-                },
-              }}
-              onEventScheduled={handleSchedulingComplete}
-            />
+            {!isCalendlyConfigured && <CalendlyInstructions />}
+
+            {isCalendlyConfigured ? (
+              <CalendlyWidget
+                calendlyUrl={CALENDLY_URL}
+                prefill={{
+                  name: leadData?.name,
+                  email: leadData?.email,
+                  customAnswers: {
+                    a1: leadData?.company || '',
+                    a2: leadData?.budget || '',
+                    a3: leadData?.goals || '',
+                    a4: leadData?.challenges || '',
+                  },
+                }}
+                onEventScheduled={handleSchedulingComplete}
+              />
+            ) : (
+              <div className="text-center py-12 text-muted-foreground">
+                <Body>Please configure your Calendly URL to enable scheduling.</Body>
+              </div>
+            )}
 
             <div className="flex justify-center pt-4">
               <Button variant="outline" onClick={handleClose}>

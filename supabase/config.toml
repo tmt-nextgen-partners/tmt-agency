@@ -37,5 +37,8 @@ verify_jwt = false
 [functions.create-lead]
 verify_jwt = false
 
+[functions.calendly-webhook]
+verify_jwt = false
+
 [edge_runtime]
 policy = "per_worker"

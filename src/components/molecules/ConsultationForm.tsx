@@ -50,11 +50,10 @@ export const ConsultationForm: React.FC<ConsultationFormProps> = ({ isModal = fa
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      const leadResult = await createLead(values);
+      await createLead(values);
       
       // Store lead data for Calendly prefill
       setLeadData({
-        leadId: leadResult?.id,
         name: `${values.firstName} ${values.lastName}`,
         email: values.email,
         company: values.companyName,
