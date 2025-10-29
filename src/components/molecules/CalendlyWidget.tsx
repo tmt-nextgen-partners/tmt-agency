@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { InlineWidget, PopupButton } from 'react-calendly';
 import { Button } from '@/components/atoms/Button';
 import { ExternalLink, Calendar } from 'lucide-react';
+
+declare global {
+  interface Window {
+    Calendly?: {
+      initPopupWidget: (options: { url: string }) => void;
+    };
+  }
+}
 
 interface CalendlyWidgetProps {
   calendlyUrl: string;
@@ -15,39 +22,76 @@ interface CalendlyWidgetProps {
   onEventScheduled?: () => void;
 }
 
+const buildCalendlyUrl = (baseUrl: string, prefill?: CalendlyWidgetProps['prefill']): string => {
+  if (!prefill) return baseUrl;
+  
+  const params = new URLSearchParams();
+  
+  if (prefill.name) params.append('name', prefill.name);
+  if (prefill.email) params.append('email', prefill.email);
+  
+  // Add custom answers as a1, a2, a3, etc.
+  if (prefill.customAnswers) {
+    Object.values(prefill.customAnswers).forEach((value, index) => {
+      if (value) params.append(`a${index + 1}`, value);
+    });
+  }
+  
+  const queryString = params.toString();
+  return queryString ? `${baseUrl}?${queryString}` : baseUrl;
+};
+
 export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
   calendlyUrl,
   prefill,
   onEventScheduled,
 }) => {
   const [showFallback, setShowFallback] = useState(false);
-  const rootElement = document.getElementById('root');
+  const [scriptLoaded, setScriptLoaded] = useState(false);
+  const fullUrl = buildCalendlyUrl(calendlyUrl, prefill);
 
   useEffect(() => {
-    // Check if iframe loads within 5 seconds
+    // Load Calendly script if not already loaded
+    const existingScript = document.querySelector('script[src*="calendly.com/assets/external/widget.js"]');
+    
+    if (!existingScript) {
+      const script = document.createElement('script');
+      script.src = 'https://assets.calendly.com/assets/external/widget.js';
+      script.async = true;
+      script.onload = () => setScriptLoaded(true);
+      document.body.appendChild(script);
+    } else {
+      setScriptLoaded(true);
+    }
+
+    // Check if widget loads within 5 seconds
     const timer = setTimeout(() => {
-      const calendlyIframe = document.querySelector('iframe[src*="calendly.com"]');
-      if (!calendlyIframe) {
+      const calendlyWidget = document.querySelector('.calendly-inline-widget iframe');
+      if (!calendlyWidget) {
         setShowFallback(true);
       }
     }, 5000);
 
-    // Listen for event scheduled message
-    if (onEventScheduled) {
-      const handleMessage = (e: MessageEvent) => {
-        if (e.data.event && e.data.event === 'calendly.event_scheduled') {
-          onEventScheduled();
-        }
-      };
-      window.addEventListener('message', handleMessage);
-      return () => {
-        clearTimeout(timer);
-        window.removeEventListener('message', handleMessage);
-      };
-    }
+    // Listen for Calendly event scheduled message
+    const handleMessage = (e: MessageEvent) => {
+      if (e.origin === 'https://calendly.com' && e.data.event === 'calendly.event_scheduled') {
+        onEventScheduled?.();
+      }
+    };
+    
+    window.addEventListener('message', handleMessage);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('message', handleMessage);
+    };
   }, [onEventScheduled]);
+
+  const handleOpenPopup = () => {
+    if (window.Calendly) {
+      window.Calendly.initPopupWidget({ url: fullUrl });
+    }
+  };
 
   return (
     <div className="calendly-widget-container min-h-[700px] bg-background rounded-lg">
@@ -61,23 +105,20 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-4">
-            <PopupButton
-              url={calendlyUrl}
-              rootElement={rootElement || document.body}
-              text="Open Scheduler Popup"
-              prefill={prefill}
-              className="inline-flex items-center justify-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-              utm={{
-                utmSource: 'tmt-website',
-                utmMedium: 'consultation-fallback',
-              }}
-            />
+            <Button
+              variant="default"
+              onClick={handleOpenPopup}
+              disabled={!scriptLoaded}
+            >
+              <Calendar className="w-4 h-4 mr-2" />
+              Open Scheduler Popup
+            </Button>
             <Button
               variant="outline"
               asChild
             >
               <a
-                href={calendlyUrl}
+                href={fullUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2"
@@ -92,24 +133,10 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
           </p>
         </div>
       ) : (
-        <InlineWidget
-          url={calendlyUrl}
-          prefill={prefill}
-          styles={{
-            height: '700px',
-            width: '100%',
-          }}
-          pageSettings={{
-            backgroundColor: 'ffffff',
-            hideEventTypeDetails: false,
-            hideLandingPageDetails: false,
-            primaryColor: '2563eb',
-            textColor: '1f2937',
-          }}
-          utm={{
-            utmSource: 'tmt-website',
-            utmMedium: 'consultation-form',
-          }}
+        <div 
+          className="calendly-inline-widget" 
+          data-url={fullUrl}
+          style={{ minWidth: '320px', height: '700px' }}
         />
       )}
     </div>
