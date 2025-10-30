@@ -62,16 +62,17 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     // Check for duplicate emails (basic spam protection)
+    // Testing: 5 minutes window (change to 24 hours for production)
     const recentLeadCheck = await supabase
       .from('leads')
       .select('id, created_at')
       .eq('email', formData.email.trim().toLowerCase())
-      .gte('created_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()) // Last 24 hours
+      .gte('created_at', new Date(Date.now() - 5 * 60 * 1000).toISOString()) // Last 5 minutes (testing mode)
       .maybeSingle();
 
     if (recentLeadCheck.data && !recentLeadCheck.error) {
       console.log('Duplicate email submission prevented:', formData.email);
-      throw new Error('A submission with this email already exists. Please wait 24 hours before submitting again.');
+      throw new Error('A submission with this email already exists. Please wait 5 minutes before submitting again.');
     }
 
     // Sanitize all string inputs
