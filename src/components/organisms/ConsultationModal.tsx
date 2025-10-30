@@ -19,6 +19,9 @@ const CALENDLY_URL = 'https://calendly.com/tmtnextgenpartners/free-business-audi
 export const ConsultationModal: React.FC = () => {
   const { isOpen, closeModal, currentStep, leadData, setStep, resetModal } = useConsultationModal();
   
+  console.log('[ConsultationModal] Current step:', currentStep);
+  console.log('[ConsultationModal] Lead data:', leadData);
+  
   // Check if Calendly is configured
   const isCalendlyConfigured = !CALENDLY_URL.includes('your-calendly-username');
 
@@ -80,10 +83,10 @@ export const ConsultationModal: React.FC = () => {
                   name: leadData?.name,
                   email: leadData?.email,
                   customAnswers: {
-                    a1: leadData?.company || '',
-                    a2: leadData?.budget || '',
-                    a3: leadData?.goals || '',
-                    a4: leadData?.challenges || '',
+                    company: leadData?.company || '',
+                    budget: leadData?.budget || '',
+                    goals: leadData?.goals || '',
+                    challenges: leadData?.challenges || '',
                   },
                 }}
                 onEventScheduled={handleSchedulingComplete}
