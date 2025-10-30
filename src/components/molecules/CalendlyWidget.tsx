@@ -6,6 +6,7 @@ declare global {
   interface Window {
     Calendly?: {
       initPopupWidget: (options: { url: string }) => void;
+      initInlineWidget: (options: { url: string; parentElement: HTMLElement }) => void;
     };
   }
 }
@@ -51,26 +52,45 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
   const fullUrl = buildCalendlyUrl(calendlyUrl, prefill);
 
   useEffect(() => {
-    // Load Calendly script if not already loaded
     const existingScript = document.querySelector('script[src*="calendly.com/assets/external/widget.js"]');
+    
+    const initializeWidget = () => {
+      const widgetContainer = document.querySelector('.calendly-inline-widget');
+      
+      if (window.Calendly && widgetContainer) {
+        // Manually initialize the inline widget
+        window.Calendly.initInlineWidget({
+          url: fullUrl,
+          parentElement: widgetContainer as HTMLElement,
+        });
+        
+        setScriptLoaded(true);
+        
+        // Check if iframe rendered within 3 seconds
+        setTimeout(() => {
+          const iframe = widgetContainer.querySelector('iframe');
+          if (!iframe) {
+            setShowFallback(true);
+          }
+        }, 3000);
+      }
+    };
     
     if (!existingScript) {
       const script = document.createElement('script');
       script.src = 'https://assets.calendly.com/assets/external/widget.js';
       script.async = true;
-      script.onload = () => setScriptLoaded(true);
+      script.onload = initializeWidget;
       document.body.appendChild(script);
     } else {
-      setScriptLoaded(true);
-    }
-
-    // Check if widget loads within 5 seconds
-    const timer = setTimeout(() => {
-      const calendlyWidget = document.querySelector('.calendly-inline-widget iframe');
-      if (!calendlyWidget) {
-        setShowFallback(true);
+      // Script already loaded
+      if (window.Calendly) {
+        initializeWidget();
+      } else {
+        // Wait for script to be ready
+        setTimeout(initializeWidget, 100);
       }
-    }, 5000);
+    }
 
     // Listen for Calendly event scheduled message
     const handleMessage = (e: MessageEvent) => {
@@ -82,10 +102,9 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
     window.addEventListener('message', handleMessage);
 
     return () => {
-      clearTimeout(timer);
       window.removeEventListener('message', handleMessage);
     };
-  }, [onEventScheduled]);
+  }, [fullUrl, onEventScheduled]);
 
   const handleOpenPopup = () => {
     if (window.Calendly) {
@@ -135,7 +154,6 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
       ) : (
         <div 
           className="calendly-inline-widget" 
-          data-url={fullUrl}
           style={{ minWidth: '320px', height: '700px' }}
         />
       )}
