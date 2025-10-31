@@ -111,21 +111,22 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
             }
           }, 3000);
 
-          // Watchdog: if iframe exists but still loading after 10s, show fallback and auto-open popup
+          // Watchdog: if iframe exists but still loading after 5s, auto-open popup
           setTimeout(() => {
             if (widgetContainerRef.current) {
               const iframe = widgetContainerRef.current.querySelector('iframe');
               if (iframe && !hasReceivedCalendlyEvent) {
-                console.warn('[Calendly] Iframe stalled after 10s, showing fallback and auto-opening popup');
-                setShowFallback(true);
+                console.warn('[Calendly] Iframe stalled after 5s, auto-opening popup');
                 setIsInitializing(false);
-                // Auto-open popup as fallback
+                // Auto-open popup immediately as fallback
                 if (window.Calendly) {
                   window.Calendly.initPopupWidget({ url: fullUrl });
                 }
+                // Show fallback UI as well
+                setTimeout(() => setShowFallback(true), 1000);
               }
             }
-          }, 10000);
+          }, 5000);
         } catch (error) {
           console.error('[Calendly] Error initializing widget:', error);
           setShowFallback(true);
@@ -208,13 +209,17 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
           <Calendar className="w-16 h-16 text-primary" />
           <div>
             <h3 className="text-xl font-semibold mb-2">Schedule Your Consultation</h3>
-            <p className="text-muted-foreground mb-6">
-              The embedded calendar couldn't load. Please use one of the options below:
+            <p className="text-muted-foreground mb-4">
+              The inline calendar works best in production environments.
+            </p>
+            <p className="text-sm text-muted-foreground mb-6">
+              Use the popup scheduler below, or open in a new tab:
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-4">
             <Button
               variant="default"
+              size="lg"
               onClick={handleOpenPopup}
               disabled={!scriptLoaded}
             >
@@ -223,6 +228,7 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
             </Button>
             <Button
               variant="outline"
+              size="lg"
               asChild
             >
               <a
@@ -236,8 +242,9 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
               </a>
             </Button>
           </div>
-          <p className="text-xs text-muted-foreground mt-4">
-            Tip: If you're in preview mode, try opening the app in a new browser tab
+          <p className="text-xs text-muted-foreground mt-4 max-w-md">
+            <strong>Note:</strong> When this app is deployed to production, the inline calendar will work perfectly within this modal. 
+            Preview environments have iframe nesting limitations that Calendly's inline widget doesn't support.
           </p>
         </div>
       ) : (
@@ -251,22 +258,31 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
                 </div>
                 
                 <div className="pt-6 border-t border-border/40 space-y-3">
-                  <p className="text-xs text-muted-foreground">Having trouble?</p>
-                  <div className="flex gap-2 justify-center">
-                    <button
+                  <p className="text-xs text-muted-foreground">Taking too long?</p>
+                  <div className="flex gap-3 justify-center">
+                    <Button
+                      variant="default"
+                      size="sm"
                       onClick={handleOpenPopup}
-                      className="text-xs px-3 py-1.5 bg-primary/10 hover:bg-primary/20 rounded-md transition-colors"
                     >
+                      <Calendar className="w-3 h-3 mr-1.5" />
                       Open Popup
-                    </button>
-                    <a
-                      href={fullUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-xs px-3 py-1.5 bg-primary/10 hover:bg-primary/20 rounded-md transition-colors inline-block"
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      asChild
                     >
-                      Open in New Tab
-                    </a>
+                      <a
+                        href={fullUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5"
+                      >
+                        <ExternalLink className="w-3 h-3" />
+                        New Tab
+                      </a>
+                    </Button>
                   </div>
                 </div>
               </div>
