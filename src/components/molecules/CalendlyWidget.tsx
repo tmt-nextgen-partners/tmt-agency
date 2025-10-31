@@ -74,6 +74,8 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
     const existingScript = document.querySelector('script[src*="calendly.com/assets/external/widget.js"]');
     console.log('[Calendly] Existing script found:', !!existingScript);
     
+    let hasReceivedCalendlyEvent = false;
+    
     const initializeWidget = () => {
       console.log('[Calendly] initializeWidget called');
       console.log('[Calendly] widgetContainerRef.current:', widgetContainerRef.current);
@@ -104,11 +106,26 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
               if (!iframe) {
                 console.warn('[Calendly] No iframe found after 3 seconds, showing fallback');
                 setShowFallback(true);
-              } else {
                 setIsInitializing(false);
               }
             }
           }, 3000);
+
+          // Watchdog: if iframe exists but still loading after 10s, show fallback and auto-open popup
+          setTimeout(() => {
+            if (widgetContainerRef.current) {
+              const iframe = widgetContainerRef.current.querySelector('iframe');
+              if (iframe && !hasReceivedCalendlyEvent) {
+                console.warn('[Calendly] Iframe stalled after 10s, showing fallback and auto-opening popup');
+                setShowFallback(true);
+                setIsInitializing(false);
+                // Auto-open popup as fallback
+                if (window.Calendly) {
+                  window.Calendly.initPopupWidget({ url: fullUrl });
+                }
+              }
+            }
+          }, 10000);
         } catch (error) {
           console.error('[Calendly] Error initializing widget:', error);
           setShowFallback(true);
@@ -152,11 +169,21 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
       }
     }
 
-    // Listen for Calendly event scheduled message
+    // Listen for Calendly messages
     const handleMessage = (e: MessageEvent) => {
-      if (e.origin === 'https://calendly.com' && e.data.event === 'calendly.event_scheduled') {
-        console.log('[Calendly] Event scheduled!');
-        onEventScheduled?.();
+      if (e.origin === 'https://calendly.com') {
+        // Mark that we've received a Calendly event (widget loaded successfully)
+        if (e.data.event === 'calendly.profile_page_viewed' || 
+            e.data.event === 'calendly.event_type_viewed') {
+          console.log('[Calendly] Widget loaded successfully:', e.data.event);
+          hasReceivedCalendlyEvent = true;
+          setIsInitializing(false);
+        }
+        
+        if (e.data.event === 'calendly.event_scheduled') {
+          console.log('[Calendly] Event scheduled!');
+          onEventScheduled?.();
+        }
       }
     };
     
@@ -217,9 +244,31 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
         <div className="relative min-h-[700px]">
           {isInitializing && (
             <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm z-10">
-              <div className="flex flex-col items-center gap-4">
-                <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                <p className="text-sm text-muted-foreground">Loading calendar...</p>
+              <div className="flex flex-col items-center gap-6">
+                <div className="flex flex-col items-center gap-4">
+                  <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                  <p className="text-sm text-muted-foreground">Loading calendar...</p>
+                </div>
+                
+                <div className="pt-6 border-t border-border/40 space-y-3">
+                  <p className="text-xs text-muted-foreground">Having trouble?</p>
+                  <div className="flex gap-2 justify-center">
+                    <button
+                      onClick={handleOpenPopup}
+                      className="text-xs px-3 py-1.5 bg-primary/10 hover:bg-primary/20 rounded-md transition-colors"
+                    >
+                      Open Popup
+                    </button>
+                    <a
+                      href={fullUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs px-3 py-1.5 bg-primary/10 hover:bg-primary/20 rounded-md transition-colors inline-block"
+                    >
+                      Open in New Tab
+                    </a>
+                  </div>
+                </div>
               </div>
             </div>
           )}
