@@ -59,7 +59,7 @@ const buildCalendlyUrl = (baseUrl: string, prefill?: CalendlyWidgetProps['prefil
 const buildPopupEmbedUrl = (url: string): string => {
   const u = new URL(url);
   u.searchParams.set('embed_domain', window.location.hostname);
-  u.searchParams.set('embed_type', 'PopupWidget');
+  u.searchParams.set('embed_type', 'Inline');
   return u.toString();
 };
 
@@ -73,6 +73,8 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
   const [isInitializing, setIsInitializing] = useState(true);
   const [popupOpened, setPopupOpened] = useState(false);
   const [customPopupOpen, setCustomPopupOpen] = useState(false);
+  const [iframeLoaded, setIframeLoaded] = useState(false);
+  const [iframeBlockWarn, setIframeBlockWarn] = useState(false);
   const widgetContainerRef = useRef<HTMLDivElement>(null);
   const fullUrl = buildCalendlyUrl(calendlyUrl, prefill);
   const popupEmbedUrl = buildPopupEmbedUrl(fullUrl);
@@ -260,6 +262,17 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
   }, [fullUrl, onEventScheduled, isPreview, popupOpened]);
 
   const handleOpenPopup = () => {
+    // Reset iframe state
+    setIframeLoaded(false);
+    setIframeBlockWarn(false);
+    
+    // Start watchdog timer
+    const watchdogTimer = setTimeout(() => {
+      if (!iframeLoaded) {
+        setIframeBlockWarn(true);
+      }
+    }, 3000);
+    
     // In preview, always use custom popup
     if (isPreview) {
       setCustomPopupOpen(true);
@@ -272,6 +285,7 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
       try {
         window.Calendly.initPopupWidget({ url: fullUrl });
         setPopupOpened(true);
+        clearTimeout(watchdogTimer);
         
         // Verify popup opened, otherwise use custom
         setTimeout(() => {
@@ -282,6 +296,7 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
           }
         }, 250);
       } catch {
+        clearTimeout(watchdogTimer);
         setCustomPopupOpen(true);
       }
     } else {
@@ -289,16 +304,56 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
     }
   };
 
+  const trySystemPopup = () => {
+    const w = 1040, h = 820;
+    const y = window.top ? (window.top.outerHeight - h) / 2 + window.top.screenY : 100;
+    const x = window.top ? (window.top.outerWidth - w) / 2 + window.top.screenX : 100;
+    window.open(fullUrl, 'calendly_popup', `popup=yes,toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=${w},height=${h},top=${y},left=${x}`);
+    setCustomPopupOpen(false);
+  };
+
+  const handleOpenNewTab = () => {
+    window.open(fullUrl, '_blank', 'noopener,noreferrer');
+    setCustomPopupOpen(false);
+  };
+
   return (
     <>
       <Dialog open={customPopupOpen} onOpenChange={setCustomPopupOpen}>
         <DialogContent className="max-w-3xl w-[95vw] h-[85vh] p-0 overflow-hidden">
-          <iframe 
-            src={popupEmbedUrl} 
-            className="w-full h-full" 
-            title="Calendly Scheduler" 
-            style={{ border: 0 }} 
-          />
+          <div className="relative w-full h-full">
+            <iframe 
+              src={popupEmbedUrl} 
+              className="w-full h-full" 
+              title="Calendly Scheduler" 
+              style={{ border: 0 }}
+              allow="geolocation; microphone; camera; payment; clipboard-read; clipboard-write; autoplay"
+              referrerPolicy="strict-origin-when-cross-origin"
+              onLoad={() => setIframeLoaded(true)}
+            />
+            
+            {iframeBlockWarn && (
+              <div className="absolute inset-0 bg-background/95 flex flex-col items-center justify-center gap-4 p-8 text-center">
+                <Calendar className="w-12 h-12 text-muted-foreground" />
+                <div className="space-y-2">
+                  <h3 className="text-lg font-semibold">Content Blocked</h3>
+                  <p className="text-sm text-muted-foreground max-w-md">
+                    Your browser blocked the embedded scheduler. This is common in preview or with strict privacy settings.
+                  </p>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Button onClick={handleOpenNewTab} variant="default" size="lg">
+                    <ExternalLink className="w-4 h-4 mr-2" />
+                    Open in New Tab
+                  </Button>
+                  <Button onClick={trySystemPopup} variant="outline" size="lg">
+                    <Calendar className="w-4 h-4 mr-2" />
+                    Try System Popup
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
         </DialogContent>
       </Dialog>
       
