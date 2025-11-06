@@ -87,21 +87,46 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
     window.location.hostname.includes('lovableproject.com') ||
     window.location.hostname.startsWith('preview--');
 
-  console.log('[Calendly] Component mounted with URL:', calendlyUrl);
+  console.log('[Calendly] ===== Component Mounted =====');
+  console.log('[Calendly] Timestamp:', new Date().toISOString());
+  console.log('[Calendly] URL:', calendlyUrl);
   console.log('[Calendly] Prefill data:', prefill);
   console.log('[Calendly] Preview mode:', isPreview);
+  console.log('[Calendly] Current hostname:', window.location.hostname);
+  console.log('[Calendly] Current protocol:', window.location.protocol);
 
   useEffect(() => {
-    console.log('[Calendly] useEffect triggered');
+    console.log('[Calendly] ===== useEffect Triggered =====');
+    console.log('[Calendly] Timestamp:', new Date().toISOString());
+    
+    // Check for CSP meta tag
+    const cspMeta = document.querySelector('meta[http-equiv="Content-Security-Policy"]');
+    if (cspMeta) {
+      const cspContent = cspMeta.getAttribute('content');
+      console.log('[Calendly] CSP meta tag found:', cspContent);
+      console.log('[Calendly] CSP includes frame-src:', cspContent?.includes('frame-src'));
+      console.log('[Calendly] CSP includes calendly.com:', cspContent?.includes('calendly.com'));
+    } else {
+      console.log('[Calendly] No CSP meta tag found in document');
+    }
+    
     const existingScript = document.querySelector('script[src*="calendly.com/assets/external/widget.js"]');
-    console.log('[Calendly] Existing script found:', !!existingScript);
+    console.log('[Calendly] Existing Calendly script found:', !!existingScript);
+    if (existingScript) {
+      console.log('[Calendly] Script src:', existingScript.getAttribute('src'));
+    }
     
     let hasReceivedCalendlyEvent = false;
     
     const initializeWidget = () => {
-      console.log('[Calendly] initializeWidget called');
-      console.log('[Calendly] widgetContainerRef.current:', widgetContainerRef.current);
+      console.log('[Calendly] ===== initializeWidget Called =====');
+      console.log('[Calendly] Timestamp:', new Date().toISOString());
+      console.log('[Calendly] widgetContainerRef.current exists:', !!widgetContainerRef.current);
+      console.log('[Calendly] Container element:', widgetContainerRef.current);
       console.log('[Calendly] window.Calendly exists:', !!window.Calendly);
+      if (window.Calendly) {
+        console.log('[Calendly] Calendly API methods:', Object.keys(window.Calendly));
+      }
       
       // PREVIEW MODE: Skip inline, auto-open custom popup
       if (isPreview) {
@@ -122,79 +147,142 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
       // PRODUCTION MODE: Try inline with fallbacks
       if (window.Calendly && widgetContainerRef.current) {
         try {
-          console.log('[Calendly] Initializing inline widget with URL:', fullUrl);
+          console.log('[Calendly] ===== Initializing Inline Widget =====');
+          console.log('[Calendly] Base URL:', fullUrl);
+          console.log('[Calendly] Inline URL with embed params:', inlineUrl);
+          console.log('[Calendly] Container ready:', !!widgetContainerRef.current);
           
           // Clear any existing content
+          const previousContent = widgetContainerRef.current.innerHTML;
+          console.log('[Calendly] Previous container content:', previousContent.substring(0, 100));
           widgetContainerRef.current.innerHTML = '';
+          console.log('[Calendly] Container cleared');
           
           // Manually initialize the inline widget
+          console.log('[Calendly] Calling Calendly.initInlineWidget...');
           window.Calendly.initInlineWidget({
             url: inlineUrl,
             parentElement: widgetContainerRef.current,
           });
           
           setScriptLoaded(true);
-          console.log('[Calendly] Widget initialized successfully');
+          console.log('[Calendly] ✓ initInlineWidget called successfully');
+          console.log('[Calendly] Waiting for iframe to be created...');
           
           // Manual iframe fallback if initInlineWidget doesn't create iframe
           setTimeout(() => {
+            console.log('[Calendly] ===== 1.5s Check: Iframe Creation =====');
             if (widgetContainerRef.current) {
               const iframe = widgetContainerRef.current.querySelector('iframe');
+              console.log('[Calendly] Iframe found:', !!iframe);
               
               if (!iframe) {
-                console.warn('[Calendly] No iframe created by initInlineWidget, creating manual iframe');
+                console.warn('[Calendly] ⚠ No iframe created by initInlineWidget');
+                console.log('[Calendly] Container HTML:', widgetContainerRef.current.innerHTML.substring(0, 200));
+                console.log('[Calendly] Creating manual iframe as fallback...');
+                
                 const manualIframe = document.createElement('iframe');
                 manualIframe.src = inlineUrl;
                 manualIframe.width = '100%';
                 manualIframe.height = '700';
                 manualIframe.style.border = '0';
                 manualIframe.title = 'Schedule a consultation';
+                
+                manualIframe.addEventListener('load', () => {
+                  console.log('[Calendly] ✓ Manual iframe loaded successfully');
+                });
+                
+                manualIframe.addEventListener('error', (e) => {
+                  console.error('[Calendly] ✗ Manual iframe load error:', e);
+                });
+                
                 widgetContainerRef.current.appendChild(manualIframe);
+                console.log('[Calendly] Manual iframe appended to container');
+              } else {
+                console.log('[Calendly] ✓ Iframe created by initInlineWidget');
+                console.log('[Calendly] Iframe src:', iframe.getAttribute('src'));
               }
             }
           }, 1500);
           
           // Check if iframe rendered within 3 seconds
           setTimeout(() => {
+            console.log('[Calendly] ===== 3s Check: Iframe Render =====');
             if (widgetContainerRef.current) {
               const iframe = widgetContainerRef.current.querySelector('iframe');
-              console.log('[Calendly] Iframe check - found:', !!iframe);
+              console.log('[Calendly] Iframe found:', !!iframe);
+              console.log('[Calendly] Container children count:', widgetContainerRef.current.children.length);
+              console.log('[Calendly] Container HTML preview:', widgetContainerRef.current.innerHTML.substring(0, 300));
               
               if (!iframe) {
-                console.warn('[Calendly] No iframe found after 3 seconds, showing fallback');
+                console.warn('[Calendly] ✗ No iframe found after 3 seconds');
+                console.log('[Calendly] Showing fallback UI');
                 setShowFallback(true);
                 setIsInitializing(false);
+              } else {
+                console.log('[Calendly] ✓ Iframe present, checking load status...');
               }
             }
           }, 3000);
 
           // Watchdog: if iframe exists but still loading after 5s, auto-open popup
           setTimeout(() => {
+            console.log('[Calendly] ===== 5s Watchdog: Stall Detection =====');
             if (widgetContainerRef.current) {
-              const iframe = widgetContainerRef.current.querySelector('iframe');
+              const iframe = widgetContainerRef.current.querySelector('iframe') as HTMLIFrameElement;
+              console.log('[Calendly] Iframe still exists:', !!iframe);
+              console.log('[Calendly] Received Calendly event:', hasReceivedCalendlyEvent);
+              
+              if (iframe) {
+                console.log('[Calendly] Iframe src:', iframe.src);
+                console.log('[Calendly] Iframe readyState:', (iframe as any).readyState);
+                
+                try {
+                  // Try to access iframe content (will fail for cross-origin, which is expected)
+                  const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+                  console.log('[Calendly] Iframe accessible:', !!iframeDoc);
+                } catch (e) {
+                  console.log('[Calendly] Iframe cross-origin (expected):', (e as Error).message);
+                }
+              }
+              
               if (iframe && !hasReceivedCalendlyEvent) {
-                console.warn('[Calendly] Iframe stalled after 5s, showing fallback and auto-opening popup');
+                console.warn('[Calendly] ⚠ Iframe stalled - no Calendly events received after 5s');
+                console.log('[Calendly] Possible causes: CSP block, network issue, or Calendly service issue');
                 setIsInitializing(false);
                 setShowFallback(true);
                 
                 // Auto-open popup as fallback
                 if (window.Calendly && !popupOpened) {
-                  console.log('[Calendly] Auto-opening popup as fallback');
+                  console.log('[Calendly] Auto-opening popup as fallback...');
                   window.Calendly.initPopupWidget({ url: popupUrl });
                   setPopupOpened(true);
+                  console.log('[Calendly] Popup opened');
                 }
               }
             }
           }, 5000);
         } catch (error) {
-          console.error('[Calendly] Error initializing widget:', error);
+          console.error('[Calendly] ===== INITIALIZATION ERROR =====');
+          console.error('[Calendly] Error type:', error instanceof Error ? error.name : typeof error);
+          console.error('[Calendly] Error message:', error instanceof Error ? error.message : String(error));
+          console.error('[Calendly] Error stack:', error instanceof Error ? error.stack : 'N/A');
+          console.error('[Calendly] Full error object:', error);
           setShowFallback(true);
           setIsInitializing(false);
         }
       } else {
-        console.warn('[Calendly] Cannot initialize - Missing Calendly or container');
-        console.log('[Calendly] window.Calendly:', window.Calendly);
-        console.log('[Calendly] widgetContainerRef.current:', widgetContainerRef.current);
+        console.warn('[Calendly] ===== INITIALIZATION BLOCKED =====');
+        console.warn('[Calendly] Cannot initialize - Missing required dependencies');
+        console.log('[Calendly] window.Calendly available:', !!window.Calendly);
+        console.log('[Calendly] widgetContainerRef.current available:', !!widgetContainerRef.current);
+        
+        if (!window.Calendly) {
+          console.log('[Calendly] Calendly API not loaded - script may have failed');
+        }
+        if (!widgetContainerRef.current) {
+          console.log('[Calendly] Container ref not available - component may not be mounted');
+        }
       }
     };
     
@@ -235,31 +323,57 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
     const handleMessage = (e: MessageEvent) => {
       try {
         const originUrl = new URL(e.origin);
+        console.log('[Calendly] Message received from:', e.origin);
+        console.log('[Calendly] Message data:', e.data);
+        
         if (originUrl.hostname.endsWith('calendly.com')) {
+          console.log('[Calendly] ✓ Valid Calendly message');
+          
           // Mark that we've received a Calendly event (widget loaded successfully)
           if (e.data.event === 'calendly.profile_page_viewed' || 
               e.data.event === 'calendly.event_type_viewed' ||
               e.data.event === 'calendly.date_and_time_selected') {
-            console.log('[Calendly] Widget loaded successfully:', e.data.event);
+            console.log('[Calendly] ===== WIDGET LOADED SUCCESSFULLY =====');
+            console.log('[Calendly] Event type:', e.data.event);
+            console.log('[Calendly] Timestamp:', new Date().toISOString());
             hasReceivedCalendlyEvent = true;
             setIsInitializing(false);
           }
           
           if (e.data.event === 'calendly.event_scheduled') {
-            console.log('[Calendly] Event scheduled!');
+            console.log('[Calendly] ===== EVENT SCHEDULED =====');
+            console.log('[Calendly] Timestamp:', new Date().toISOString());
+            console.log('[Calendly] Event data:', e.data);
             onEventScheduled?.();
           }
+        } else {
+          console.log('[Calendly] Non-Calendly message from:', originUrl.hostname);
         }
       } catch (err) {
-        // Ignore invalid origins
+        console.log('[Calendly] Invalid message origin or data:', err);
       }
     };
     
     window.addEventListener('message', handleMessage);
 
+    // Listen for CSP violations
+    const handleCSPViolation = (e: SecurityPolicyViolationEvent) => {
+      if (e.violatedDirective.includes('frame') || e.blockedURI.includes('calendly')) {
+        console.error('[Calendly] ===== CSP VIOLATION DETECTED =====');
+        console.error('[Calendly] Violated directive:', e.violatedDirective);
+        console.error('[Calendly] Blocked URI:', e.blockedURI);
+        console.error('[Calendly] Original policy:', e.originalPolicy);
+        console.error('[Calendly] This explains why Calendly iframe is blocked!');
+      }
+    };
+    
+    document.addEventListener('securitypolicyviolation', handleCSPViolation);
+
     return () => {
-      console.log('[Calendly] Cleanup - removing message listener');
+      console.log('[Calendly] ===== Component Cleanup =====');
+      console.log('[Calendly] Removing message listener');
       window.removeEventListener('message', handleMessage);
+      document.removeEventListener('securitypolicyviolation', handleCSPViolation);
     };
   }, [fullUrl, onEventScheduled, isPreview, popupOpened]);
 
