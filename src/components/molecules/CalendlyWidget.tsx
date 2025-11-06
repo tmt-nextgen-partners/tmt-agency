@@ -56,10 +56,10 @@ const buildCalendlyUrl = (baseUrl: string, prefill?: CalendlyWidgetProps['prefil
   return finalUrl;
 };
 
-const buildPopupEmbedUrl = (url: string): string => {
+const addEmbedParams = (url: string, mode: 'Inline' | 'PopupWidget'): string => {
   const u = new URL(url);
   u.searchParams.set('embed_domain', window.location.hostname);
-  u.searchParams.set('embed_type', 'Inline');
+  u.searchParams.set('embed_type', mode);
   return u.toString();
 };
 
@@ -77,7 +77,9 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
   const [iframeBlockWarn, setIframeBlockWarn] = useState(false);
   const widgetContainerRef = useRef<HTMLDivElement>(null);
   const fullUrl = buildCalendlyUrl(calendlyUrl, prefill);
-  const popupEmbedUrl = buildPopupEmbedUrl(fullUrl);
+  const inlineUrl = addEmbedParams(fullUrl, 'Inline');
+  const popupUrl = addEmbedParams(fullUrl, 'PopupWidget');
+  const popupEmbedUrl = inlineUrl; // For custom dialog iframe
   
   // Detect if we're in a preview environment
   const isPreview = 
@@ -127,7 +129,7 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
           
           // Manually initialize the inline widget
           window.Calendly.initInlineWidget({
-            url: fullUrl,
+            url: inlineUrl,
             parentElement: widgetContainerRef.current,
           });
           
@@ -142,7 +144,7 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
               if (!iframe) {
                 console.warn('[Calendly] No iframe created by initInlineWidget, creating manual iframe');
                 const manualIframe = document.createElement('iframe');
-                manualIframe.src = fullUrl;
+                manualIframe.src = inlineUrl;
                 manualIframe.width = '100%';
                 manualIframe.height = '700';
                 manualIframe.style.border = '0';
@@ -178,7 +180,7 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
                 // Auto-open popup as fallback
                 if (window.Calendly && !popupOpened) {
                   console.log('[Calendly] Auto-opening popup as fallback');
-                  window.Calendly.initPopupWidget({ url: fullUrl });
+                  window.Calendly.initPopupWidget({ url: popupUrl });
                   setPopupOpened(true);
                 }
               }
@@ -283,7 +285,7 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
     // In production, try Calendly script popup first, fallback to custom
     if (window.Calendly) {
       try {
-        window.Calendly.initPopupWidget({ url: fullUrl });
+        window.Calendly.initPopupWidget({ url: popupUrl });
         setPopupOpened(true);
         clearTimeout(watchdogTimer);
         
@@ -308,7 +310,7 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
     const w = 1040, h = 820;
     const y = window.top ? (window.top.outerHeight - h) / 2 + window.top.screenY : 100;
     const x = window.top ? (window.top.outerWidth - w) / 2 + window.top.screenX : 100;
-    window.open(fullUrl, 'calendly_popup', `popup=yes,toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=${w},height=${h},top=${y},left=${x}`);
+    window.open(popupUrl, 'calendly_popup', `popup=yes,toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=${w},height=${h},top=${y},left=${x}`);
     setCustomPopupOpen(false);
   };
 
