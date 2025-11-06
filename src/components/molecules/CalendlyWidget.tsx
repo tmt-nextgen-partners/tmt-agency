@@ -63,11 +63,19 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
   const [showFallback, setShowFallback] = useState(false);
   const [scriptLoaded, setScriptLoaded] = useState(false);
   const [isInitializing, setIsInitializing] = useState(true);
+  const [popupOpened, setPopupOpened] = useState(false);
   const widgetContainerRef = useRef<HTMLDivElement>(null);
   const fullUrl = buildCalendlyUrl(calendlyUrl, prefill);
+  
+  // Detect if we're in a preview environment
+  const isPreview = 
+    window.location.hostname.includes('lovable.app') ||
+    window.location.hostname.includes('lovableproject.com') ||
+    window.location.hostname.startsWith('preview--');
 
   console.log('[Calendly] Component mounted with URL:', calendlyUrl);
   console.log('[Calendly] Prefill data:', prefill);
+  console.log('[Calendly] Preview mode:', isPreview);
 
   useEffect(() => {
     console.log('[Calendly] useEffect triggered');
@@ -81,6 +89,23 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
       console.log('[Calendly] widgetContainerRef.current:', widgetContainerRef.current);
       console.log('[Calendly] window.Calendly exists:', !!window.Calendly);
       
+      // PREVIEW MODE: Skip inline, auto-open popup
+      if (isPreview) {
+        console.log('[Calendly] Preview mode detected - opening popup directly');
+        setIsInitializing(false);
+        setShowFallback(true);
+        
+        if (window.Calendly && !popupOpened) {
+          setTimeout(() => {
+            console.log('[Calendly] Auto-opening popup in preview mode');
+            window.Calendly!.initPopupWidget({ url: fullUrl });
+            setPopupOpened(true);
+          }, 500);
+        }
+        return;
+      }
+      
+      // PRODUCTION MODE: Try inline with fallbacks
       if (window.Calendly && widgetContainerRef.current) {
         try {
           console.log('[Calendly] Initializing inline widget with URL:', fullUrl);
@@ -96,6 +121,24 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
           
           setScriptLoaded(true);
           console.log('[Calendly] Widget initialized successfully');
+          
+          // Manual iframe fallback if initInlineWidget doesn't create iframe
+          setTimeout(() => {
+            if (widgetContainerRef.current) {
+              const iframe = widgetContainerRef.current.querySelector('iframe');
+              
+              if (!iframe) {
+                console.warn('[Calendly] No iframe created by initInlineWidget, creating manual iframe');
+                const manualIframe = document.createElement('iframe');
+                manualIframe.src = fullUrl;
+                manualIframe.width = '100%';
+                manualIframe.height = '700';
+                manualIframe.style.border = '0';
+                manualIframe.title = 'Schedule a consultation';
+                widgetContainerRef.current.appendChild(manualIframe);
+              }
+            }
+          }, 1500);
           
           // Check if iframe rendered within 3 seconds
           setTimeout(() => {
@@ -116,14 +159,16 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
             if (widgetContainerRef.current) {
               const iframe = widgetContainerRef.current.querySelector('iframe');
               if (iframe && !hasReceivedCalendlyEvent) {
-                console.warn('[Calendly] Iframe stalled after 5s, auto-opening popup');
+                console.warn('[Calendly] Iframe stalled after 5s, showing fallback and auto-opening popup');
                 setIsInitializing(false);
-                // Auto-open popup immediately as fallback
-                if (window.Calendly) {
+                setShowFallback(true);
+                
+                // Auto-open popup as fallback
+                if (window.Calendly && !popupOpened) {
+                  console.log('[Calendly] Auto-opening popup as fallback');
                   window.Calendly.initPopupWidget({ url: fullUrl });
+                  setPopupOpened(true);
                 }
-                // Show fallback UI as well
-                setTimeout(() => setShowFallback(true), 1000);
               }
             }
           }, 5000);
@@ -146,6 +191,7 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
       script.async = true;
       script.onload = () => {
         console.log('[Calendly] Script loaded successfully');
+        setScriptLoaded(true);
         initializeWidget();
       };
       script.onerror = (error) => {
@@ -159,6 +205,7 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
       // Script already loaded
       if (window.Calendly) {
         console.log('[Calendly] Calendly API ready, initializing immediately');
+        setScriptLoaded(true);
         initializeWidget();
       } else {
         console.log('[Calendly] Script exists but Calendly not ready, waiting...');
@@ -170,21 +217,27 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
       }
     }
 
-    // Listen for Calendly messages
+    // Listen for Calendly messages - accept any calendly.com subdomain
     const handleMessage = (e: MessageEvent) => {
-      if (e.origin === 'https://calendly.com') {
-        // Mark that we've received a Calendly event (widget loaded successfully)
-        if (e.data.event === 'calendly.profile_page_viewed' || 
-            e.data.event === 'calendly.event_type_viewed') {
-          console.log('[Calendly] Widget loaded successfully:', e.data.event);
-          hasReceivedCalendlyEvent = true;
-          setIsInitializing(false);
+      try {
+        const originUrl = new URL(e.origin);
+        if (originUrl.hostname.endsWith('calendly.com')) {
+          // Mark that we've received a Calendly event (widget loaded successfully)
+          if (e.data.event === 'calendly.profile_page_viewed' || 
+              e.data.event === 'calendly.event_type_viewed' ||
+              e.data.event === 'calendly.date_and_time_selected') {
+            console.log('[Calendly] Widget loaded successfully:', e.data.event);
+            hasReceivedCalendlyEvent = true;
+            setIsInitializing(false);
+          }
+          
+          if (e.data.event === 'calendly.event_scheduled') {
+            console.log('[Calendly] Event scheduled!');
+            onEventScheduled?.();
+          }
         }
-        
-        if (e.data.event === 'calendly.event_scheduled') {
-          console.log('[Calendly] Event scheduled!');
-          onEventScheduled?.();
-        }
+      } catch (err) {
+        // Ignore invalid origins
       }
     };
     
@@ -194,11 +247,12 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
       console.log('[Calendly] Cleanup - removing message listener');
       window.removeEventListener('message', handleMessage);
     };
-  }, [fullUrl, onEventScheduled]);
+  }, [fullUrl, onEventScheduled, isPreview, popupOpened]);
 
   const handleOpenPopup = () => {
     if (window.Calendly) {
       window.Calendly.initPopupWidget({ url: fullUrl });
+      setPopupOpened(true);
     }
   };
 
@@ -209,12 +263,25 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
           <Calendar className="w-16 h-16 text-primary" />
           <div>
             <h3 className="text-xl font-semibold mb-2">Schedule Your Consultation</h3>
-            <p className="text-muted-foreground mb-4">
-              The inline calendar works best in production environments.
-            </p>
-            <p className="text-sm text-muted-foreground mb-6">
-              Use the popup scheduler below, or open in a new tab:
-            </p>
+            {isPreview ? (
+              <>
+                <p className="text-muted-foreground mb-4">
+                  You're viewing a preview. {popupOpened ? 'The scheduler popup should be open.' : 'Opening scheduler popup...'}
+                </p>
+                <p className="text-sm text-muted-foreground mb-6">
+                  {popupOpened ? 'Need to reopen it or prefer a new tab?' : 'Popup blocked? Use the buttons below:'}
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="text-muted-foreground mb-4">
+                  The inline calendar couldn't load.
+                </p>
+                <p className="text-sm text-muted-foreground mb-6">
+                  Use the popup scheduler or open in a new tab:
+                </p>
+              </>
+            )}
           </div>
           <div className="flex flex-col sm:flex-row gap-4">
             <Button
@@ -224,7 +291,7 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
               disabled={!scriptLoaded}
             >
               <Calendar className="w-4 h-4 mr-2" />
-              Open Scheduler Popup
+              {popupOpened ? 'Reopen Popup' : 'Open Popup'}
             </Button>
             <Button
               variant="outline"
@@ -242,10 +309,11 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
               </a>
             </Button>
           </div>
-          <p className="text-xs text-muted-foreground mt-4 max-w-md">
-            <strong>Note:</strong> When this app is deployed to production, the inline calendar will work perfectly within this modal. 
-            Preview environments have iframe nesting limitations that Calendly's inline widget doesn't support.
-          </p>
+          {!isPreview && (
+            <p className="text-xs text-muted-foreground mt-4 max-w-md">
+              <strong>Tip:</strong> The popup keeps you on our site while scheduling your consultation.
+            </p>
+          )}
         </div>
       ) : (
         <div className="relative min-h-[700px]">
