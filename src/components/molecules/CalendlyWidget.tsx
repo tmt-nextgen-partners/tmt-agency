@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/atoms/Button';
 import { ExternalLink, Calendar, Loader2 } from 'lucide-react';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 
 declare global {
   interface Window {
@@ -55,6 +56,13 @@ const buildCalendlyUrl = (baseUrl: string, prefill?: CalendlyWidgetProps['prefil
   return finalUrl;
 };
 
+const buildPopupEmbedUrl = (url: string): string => {
+  const u = new URL(url);
+  u.searchParams.set('embed_domain', window.location.hostname);
+  u.searchParams.set('embed_type', 'PopupWidget');
+  return u.toString();
+};
+
 export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
   calendlyUrl,
   prefill,
@@ -64,8 +72,10 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
   const [scriptLoaded, setScriptLoaded] = useState(false);
   const [isInitializing, setIsInitializing] = useState(true);
   const [popupOpened, setPopupOpened] = useState(false);
+  const [customPopupOpen, setCustomPopupOpen] = useState(false);
   const widgetContainerRef = useRef<HTMLDivElement>(null);
   const fullUrl = buildCalendlyUrl(calendlyUrl, prefill);
+  const popupEmbedUrl = buildPopupEmbedUrl(fullUrl);
   
   // Detect if we're in a preview environment
   const isPreview = 
@@ -89,16 +99,16 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
       console.log('[Calendly] widgetContainerRef.current:', widgetContainerRef.current);
       console.log('[Calendly] window.Calendly exists:', !!window.Calendly);
       
-      // PREVIEW MODE: Skip inline, auto-open popup
+      // PREVIEW MODE: Skip inline, auto-open custom popup
       if (isPreview) {
-        console.log('[Calendly] Preview mode detected - opening popup directly');
+        console.log('[Calendly] Preview mode detected - opening custom popup directly');
         setIsInitializing(false);
         setShowFallback(true);
         
-        if (window.Calendly && !popupOpened) {
+        if (!popupOpened) {
           setTimeout(() => {
-            console.log('[Calendly] Auto-opening popup in preview mode');
-            window.Calendly!.initPopupWidget({ url: fullUrl });
+            console.log('[Calendly] Auto-opening custom popup in preview mode');
+            setCustomPopupOpen(true);
             setPopupOpened(true);
           }, 500);
         }
@@ -250,14 +260,49 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
   }, [fullUrl, onEventScheduled, isPreview, popupOpened]);
 
   const handleOpenPopup = () => {
-    if (window.Calendly) {
-      window.Calendly.initPopupWidget({ url: fullUrl });
+    // In preview, always use custom popup
+    if (isPreview) {
+      setCustomPopupOpen(true);
       setPopupOpened(true);
+      return;
+    }
+    
+    // In production, try Calendly script popup first, fallback to custom
+    if (window.Calendly) {
+      try {
+        window.Calendly.initPopupWidget({ url: fullUrl });
+        setPopupOpened(true);
+        
+        // Verify popup opened, otherwise use custom
+        setTimeout(() => {
+          const calendlyOverlay = document.querySelector('[data-calendly-root]');
+          if (!calendlyOverlay) {
+            console.log('[Calendly] Script popup failed, using custom dialog');
+            setCustomPopupOpen(true);
+          }
+        }, 250);
+      } catch {
+        setCustomPopupOpen(true);
+      }
+    } else {
+      setCustomPopupOpen(true);
     }
   };
 
   return (
-    <div className="calendly-widget-container min-h-[700px] bg-background rounded-lg">
+    <>
+      <Dialog open={customPopupOpen} onOpenChange={setCustomPopupOpen}>
+        <DialogContent className="max-w-3xl w-[95vw] h-[85vh] p-0 overflow-hidden">
+          <iframe 
+            src={popupEmbedUrl} 
+            className="w-full h-full" 
+            title="Calendly Scheduler" 
+            style={{ border: 0 }} 
+          />
+        </DialogContent>
+      </Dialog>
+      
+      <div className="calendly-widget-container min-h-[700px] bg-background rounded-lg">
       {showFallback ? (
         <div className="flex flex-col items-center justify-center min-h-[700px] gap-6 p-8 text-center">
           <Calendar className="w-16 h-16 text-primary" />
@@ -288,7 +333,7 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
               variant="default"
               size="lg"
               onClick={handleOpenPopup}
-              disabled={!scriptLoaded}
+              disabled={isPreview ? false : !scriptLoaded}
             >
               <Calendar className="w-4 h-4 mr-2" />
               {popupOpened ? 'Reopen Popup' : 'Open Popup'}
@@ -363,6 +408,7 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
           />
         </div>
       )}
-    </div>
+      </div>
+    </>
   );
 };
