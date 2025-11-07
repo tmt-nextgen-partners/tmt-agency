@@ -79,6 +79,7 @@ export const ConsultationModal: React.FC = () => {
             {isCalendlyConfigured ? (
               <CalendlyWidget
                 calendlyUrl={CALENDLY_URL}
+                mode="popup"
                 prefill={{
                   name: leadData?.name,
                   email: leadData?.email,
