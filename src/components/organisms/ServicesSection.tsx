@@ -6,7 +6,7 @@ import { useConsultationModal } from '@/contexts/ConsultationModalContext';
 import { 
   Cog, 
   Zap, 
-  Database, 
+  Brain, 
   Workflow, 
   BarChart3,
   Code
@@ -29,9 +29,9 @@ const services = [
     description: "Custom analytics dashboards that track KPIs, measure ROI, and provide actionable insights to optimize your business performance in real-time."
   },
   {
-    icon: Database,
-    title: "Data Integration & Management",
-    description: "Unify your business data across platforms for better decision-making and streamlined operations."
+    icon: Brain,
+    title: "AI Driven Solutions",
+    description: "Develop and implement custom AI solutions that automate decision-making, enhance data analysis, and unlock intelligent insights to drive your business forward."
   },
   {
     icon: Workflow,
