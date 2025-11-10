@@ -33,13 +33,32 @@ const buildCalendlyUrl = (baseUrl: string, prefill?: CalendlyWidgetProps['prefil
   if (prefill.email) params.append('email', prefill.email);
   
   if (prefill.customAnswers) {
-    Object.values(prefill.customAnswers).forEach((value, index) => {
+    const answers = Object.values(prefill.customAnswers);
+    answers.forEach((value, index) => {
       if (value) params.append(`a${index + 1}`, value);
     });
   }
   
   const queryString = params.toString();
   return queryString ? `${baseUrl}?${queryString}` : baseUrl;
+};
+
+const waitForCalendly = (): Promise<boolean> => {
+  return new Promise((resolve) => {
+    if (window.Calendly) {
+      resolve(true);
+      return;
+    }
+    
+    let attempts = 0;
+    const interval = setInterval(() => {
+      if (window.Calendly || attempts > 20) {
+        clearInterval(interval);
+        resolve(!!window.Calendly);
+      }
+      attempts++;
+    }, 100);
+  });
 };
 
 export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
@@ -124,11 +143,23 @@ export const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
     }
   };
 
-  const handleOpenPopup = () => {
-    console.log('[Calendly] Opening popup');
-    if (window.Calendly?.initPopupWidget) {
-      window.Calendly.initPopupWidget({ url: fullUrl });
+  const handleOpenPopup = async () => {
+    console.log('[Calendly] Opening popup - checking availability...');
+    
+    // Wait for Calendly to be available (with timeout)
+    const isAvailable = await waitForCalendly();
+    
+    if (window.Calendly?.initPopupWidget && isAvailable) {
+      console.log('[Calendly] Initializing popup widget');
+      try {
+        window.Calendly.initPopupWidget({ url: fullUrl });
+      } catch (error) {
+        console.error('[Calendly] Popup initialization failed:', error);
+        // Fallback to new tab
+        window.open(fullUrl, '_blank', 'noopener,noreferrer');
+      }
     } else {
+      console.warn('[Calendly] Calendly object not available, opening in new tab');
       window.open(fullUrl, '_blank', 'noopener,noreferrer');
     }
   };
