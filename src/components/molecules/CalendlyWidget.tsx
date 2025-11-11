@@ -39,7 +39,7 @@ const buildCalendlyUrl = (baseUrl: string, prefill?: CalendlyWidgetProps['prefil
     });
   }
   
-  const queryString = params.toString();
+  const queryString = params.toString().replace(/\+/g, '%20');
   return queryString ? `${baseUrl}?${queryString}` : baseUrl;
 };
 
