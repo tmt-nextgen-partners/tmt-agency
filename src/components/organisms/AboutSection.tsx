@@ -4,7 +4,7 @@ import { Building2, Target, Lightbulb } from 'lucide-react';
 
 export const AboutSection: React.FC = () => {
   return (
-    <section id="about" className="py-20 bg-muted/30">
+    <section id="about" className="py-12 bg-muted/30">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center max-w-4xl mx-auto mb-16 space-y-4">
