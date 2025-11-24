@@ -2,14 +2,14 @@ import React from 'react';
 import { Button } from '../atoms/Button';
 import { H1, BodyLarge } from '../atoms/Typography';
 import { LazyImage } from '../molecules/LazyImage';
-import { ArrowRight, TrendingUp, Users, Award } from 'lucide-react';
+import { ArrowRight, TrendingUp, Award } from 'lucide-react';
 import { useConsultationModal } from '@/contexts/ConsultationModalContext';
 import heroImage from '@/assets/hero-business-team.jpg';
 
 export const HeroSection: React.FC = () => {
   const { openModal } = useConsultationModal();
   return (
-    <section className="relative min-h-screen flex items-center bg-gradient-subtle overflow-hidden">
+    <section className="relative min-h-[80vh] flex items-center bg-gradient-subtle overflow-hidden">
       {/* Background Elements */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5" />
       <div className="absolute top-20 right-10 w-72 h-72 bg-gradient-primary rounded-full blur-3xl opacity-10 animate-glow-pulse" />
@@ -50,21 +50,6 @@ export const HeroSection: React.FC = () => {
               </Button>
             </div>
 
-            {/* Social Proof */}
-            <div className="flex items-center space-x-6 pt-6 border-t border-border">
-              <div className="flex items-center space-x-2">
-                <TrendingUp className="w-5 h-5 text-success" />
-                <span className="text-sm text-muted-foreground">
-                  <strong className="text-foreground">$2.3M+</strong> revenue generated for clients
-                </span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Users className="w-5 h-5 text-primary" />
-                <span className="text-sm text-muted-foreground">
-                  <strong className="text-foreground">98%</strong> client satisfaction
-                </span>
-              </div>
-            </div>
           </div>
 
           {/* Hero Image */}
