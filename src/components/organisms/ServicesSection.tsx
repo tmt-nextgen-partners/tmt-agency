@@ -49,7 +49,7 @@ export const ServicesSection: React.FC = () => {
   const { openModal } = useConsultationModal();
   
   return (
-    <section id="services" className="py-20 bg-background">
+    <section id="services" className="py-12 bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
