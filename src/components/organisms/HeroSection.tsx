@@ -39,23 +39,7 @@ export const HeroSection: React.FC = () => {
                 We bring enterprise-level capabilities to small businesses through agentic AI products and custom solutions 
                 at a fraction of traditional costs. Our intelligent automation expands your operations and unlocks growth 
                 potential previously reserved for large corporations.
-              </BodyLarge>
-            </div>
-
-            {/* Key Stats */}
-            <div className="grid grid-cols-3 gap-6 py-6">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-primary">100+</div>
-                <div className="text-sm text-muted-foreground">Clients Served</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-success">285%</div>
-                <div className="text-sm text-muted-foreground">Avg ROI</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-warning">5+</div>
-                <div className="text-sm text-muted-foreground">Years Experience</div>
-              </div>
+            </BodyLarge>
             </div>
 
             {/* CTAs */}
