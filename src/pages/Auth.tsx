@@ -32,7 +32,7 @@ const signUpSchema = z.object({
 const Auth = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const { signIn, signUp, user } = useAuth();
+  const { signIn, signUp, resetPassword, user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -286,6 +286,38 @@ const Auth = () => {
                   <Button type="submit" className="w-full">
                     Sign In
                   </Button>
+                  <div className="text-center">
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        const email = signInForm.getValues('email');
+                        if (!email) {
+                          toast({
+                            title: "Email required",
+                            description: "Please enter your email address first.",
+                            variant: "destructive",
+                          });
+                          return;
+                        }
+                        const { error } = await resetPassword(email);
+                        if (error) {
+                          toast({
+                            title: "Error",
+                            description: error.message || "Failed to send reset email",
+                            variant: "destructive",
+                          });
+                        } else {
+                          toast({
+                            title: "Check your email",
+                            description: "We've sent you a password reset link.",
+                          });
+                        }
+                      }}
+                      className="text-sm text-muted-foreground hover:text-primary hover:underline"
+                    >
+                      Forgot your password?
+                    </button>
+                  </div>
                 </form>
               </Form>
             )}
