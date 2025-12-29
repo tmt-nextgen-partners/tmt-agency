@@ -53,7 +53,7 @@ export const Header: React.FC = () => {
             <Button variant="cta" size="sm" onClick={openModal}>
               Free Consultation
             </Button>
-            <Link to="/auth">
+            <Link to="/admin">
               <Button variant="outline" size="sm">
                 <Shield className="w-4 h-4 mr-2" />
                 Admin
@@ -111,7 +111,7 @@ export const Header: React.FC = () => {
               >
                 Free Consultation
               </Button>
-              <Link to="/auth" className="block">
+              <Link to="/admin" className="block">
                 <Button variant="outline" size="sm" className="w-full">
                   <Shield className="w-4 h-4 mr-2" />
                   Admin
